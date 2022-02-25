@@ -1,0 +1,11 @@
+# Ignore all !
+*
+# Except :
+!README.md
+!myflec.exclude.lst
+!.bash_*
+.bash_history*
+!.gitconfig*
+!.gitignore
+!.ssh/
+!.ssh/config

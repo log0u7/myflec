@@ -1,0 +1,5 @@
+# Github
+# vi: ft=gitconfig
+[user]
+	name = githubuser
+	email = githubuser@github.com
