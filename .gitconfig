@@ -1,0 +1,73 @@
+# .gitconfig
+
+[includeIf "gitdir:~/projects/work/"]
+	path = .gitconfig-work
+[includeIf "gitdir:~/projets/github"]
+	path = .gitconfig-github
+[includeIf "gitdir:~/projets/gitlab"]
+	path = .gitconfig-gitlab
+
+[user]
+	name = Anne Haunyme
+	email = anne.haunyme@public.mail
+[core]
+	editor = vim
+
+[color]
+	ui = true
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[credential]
+	helper = cache --timeout=3600
+
+[merge]
+	tool = vimdiff
+
+[mergetool]
+	keeptemporaries = false
+	keepbackups = false
+	prompt = false
+	trustexitcode = false
+
+[alias]
+	br = branch
+	cp = cherry-pick
+	co = checkout
+	cl = clone
+	ci = commit
+	fe = fetch
+	pu = push
+	pl = pull
+	rv = remote -v
+	sp = status --porcelain
+	spu = status --porcelain -uno
+	ss = status -s
+	ssu = status -s -uno
+	st = status -sb
+	stu = status -sb -uno
+	unstage = reset HEAD --
+	dc = diff --cached
+	last = log -1 --stat
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cblue<%an>%Creset' --abbrev-commit --date=relative --all
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	ls = ls-files
+	ign = ls-files -o -i --exclude-standard
+	del = rm --cached
+	rbi = rebase --root --interactive
