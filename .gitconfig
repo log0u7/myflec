@@ -1,4 +1,7 @@
 # .gitconfig
+[user]
+	name = Anne Haunyme
+	email = anne.haunyme@public.mail
 
 [includeIf "gitdir:~/projects/work/"]
 	path = .gitconfig-work
@@ -7,9 +10,6 @@
 [includeIf "gitdir:~/projets/gitlab"]
 	path = .gitconfig-gitlab
 
-[user]
-	name = Anne Haunyme
-	email = anne.haunyme@public.mail
 [core]
 	editor = vim
 
