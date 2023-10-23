@@ -9,3 +9,5 @@
 !.gitignore
 !.ssh/
 !.ssh/config
+!.ssh/config.d/
+!.ssh/config.d/*
