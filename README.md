@@ -31,7 +31,7 @@ rsync -av --progress --exclude-from 'myflec.exclude.lst' . ~/
 # Keep track
 You may want to use git to keep track and of your own setup and backup it.
 
-**/!\ Use only private repository and/or dont track any unciphered secrets ! /!\**
+**/!\ Use only private repository and/or dont track any unciphered secrets !*
 
 - Copy `.gitignore` to your home, so git ignore all files except :
 
@@ -40,14 +40,14 @@ You may want to use git to keep track and of your own setup and backup it.
 	cat myflec/profile >> ~/.bashrc
 	. .bashrc
 	```
-	_Note : You may want to remove somme exception from `.gitignore`_
+	_Note : You may want to remove exceptions from `.gitignore`_
 
 - Initialize git repository :
 	
 	```bash
 	git init
-	git remove add origin your_repository_url
+	git remote add origin your_repository_url
 	git add *
-	git commit -m "Initial commit."
+	git commit -m "Initial sync to your_repository_url"
 	git push -u origin main
 	```
