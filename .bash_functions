@@ -24,7 +24,7 @@ fCalc()
 # list of hosts
 fSearchHosts()
 {
-    [[ -n "$*" ]] && grep -wi 'host\|hostname' ~/.ssh/config | grep -v '^\s*\#' | awk '{print $2}' |grep "$*";
+    [[ -n "$*" ]] && grep -wi 'host\|hostname' ~/.ssh/config.d/* | grep -v '^\s*\#' | awk '{print $2}' |grep "$*";
 }
 
 # ssh-add
