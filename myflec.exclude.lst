@@ -2,3 +2,4 @@ exclude.lst
 README.md
 profile
 .git
+.gitignore
