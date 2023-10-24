@@ -6,8 +6,8 @@
 !.bash_*
 .bash_history*
 !.gitconfig*
+!.gitconfig.d/*
 !.gitignore
 !.ssh/
-!.ssh/config
-!.ssh/config.d/
+!.ssh/config*
 !.ssh/config.d/*

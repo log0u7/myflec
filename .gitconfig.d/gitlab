@@ -1,5 +1,3 @@
-# Gitlab
-# vi: ft=gitconfig
 [user]
 	name = gitlabuser
 	email = gitlabuser@gitlab.com
