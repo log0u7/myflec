@@ -33,7 +33,7 @@ cat profile >> ~/.bashrc
 # Keep track
 You may want to use git to keep track and of your own setup and backup it.
 
-**/!\ Use only private repository and/or dont track any unciphered secrets !*
+**! Use only private repository and/or dont track any unciphered secrets !*
 
 - Copy `.gitignore` to your home, so git ignore all files except :
 
