@@ -45,7 +45,7 @@ fSshKeygen(){
                 ssh-keygen -q -t rsa -b 4096 -a 100 -C "$email" -f "/home/$USER/.ssh/${domain}_${user}_rsa4096"
             fi
             if [ -f "/home/$USER/.ssh/${domain}_${user}_ed25519" ]; then 
-                echo "${domain}_${user}_ed25512 keypair allready exist"
+                echo "${domain}_${user}_ed25519 keypair allready exist"
             else
                 ssh-keygen -q -t ed25519 -a 100 -C "$email" -f "/home/$USER/.ssh/${domain}_${user}_ed25519"
             fi
