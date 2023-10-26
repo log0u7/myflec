@@ -1,28 +1,15 @@
-# .gitconfig
 [user]
 	name = Anne Haunyme
 	email = anne.haunyme@public.mail
 
-[includeIf "gitdir:~/projects/work/"]
-	path = .gitconfig.d/work
-[includeIf "gitdir:~/projets/github"]
-	path = .gitconfig.d/github
-[includeIf "gitdir:~/projets/gitlab"]
-	path = .gitconfig.d/gitlab
+[includeIf "gitdir:~/projets/work/"]
+	path = ~/.gitconfig.d/work
+[includeIf "gitdir:~/projets/github/"]
+	path = ~/.gitconfig.d/github
+[includeIf "gitdir:~/projets/gitlab/"]
+	path = ~/.gitconfig.d/gitlab
 
-[core]
-	editor = vim
-	include = .gitconfig.d/colors
-	include = .gitconfig.d/aliases
-
-[credential]
-	helper = cache --timeout=3600
-
-[merge]
-	tool = vimdiff
-
-[mergetool]
-	keeptemporaries = false
-	keepbackups = false
-	prompt = false
-	trustexitcode = false
+[include]
+	path = ~/.gitconfig.d/config
+	path = ~/.gitconfig.d/colors
+	path = ~/.gitconfig.d/aliases
