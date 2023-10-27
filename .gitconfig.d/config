@@ -12,3 +12,7 @@
 	keepbackups = false
 	prompt = false
 	trustexitcode = false
+
+[init]
+	defaultBranch = main
+

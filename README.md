@@ -27,7 +27,7 @@ For my Vim setup see [MyVim](https://github.com/log0u7/myvim).
 git clone https://github.com/log0u7/myflec
 rsync -av --progress --exclude-from 'myflec/myflec.exclude.lst' myflec/ ~/
 cat myflec/profile >> ~/.bashrc
-. .bashrc
+. ~/.bashrc
 ```
 # Keep track
 You may want to use git to keep track and of your own setup and backup it.
