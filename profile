@@ -1,5 +1,5 @@
 
 # include myflec
-if [ -f ~/.bash_myflec ]; then
-    . ~/.bash_myflec
+if [ -r ~/.bashrc.d/myflec ]; then
+    . ~/.bashrc.d/myflec
 fi

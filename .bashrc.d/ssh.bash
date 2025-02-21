@@ -1,31 +1,8 @@
-# .bash_functions
-# vi: ft=sh
+# Launch ssh-agent
+#[[ ! "${SSH_AGENT_PID}" || -z "${SSH_AGENT_PID}" ]] && { eval $(ssh-agent)&>/dev/null; }
 
-# GPG Symetric Cipher
-fSimpleGpgFileCipher(){
-  for vFile in "$*"; do
-    [[ -s "$vFile" ]] && gpg -c "$vFile"
-  done
-}
-
-# GPG Uncipher
-fSimpleGpgFileUncipher(){
-  for vFile in "$*"; do
-    [[ -s "$vFile" ]] && gpg "$vFile";
-  done
-}
-
-# calc w/ bc
-fCalc()
-{
-    if [[ -z "$*" ]]; then bc -q; else bc <<< "$*"; fi
-}
-
-# list of hosts
-fSearchHosts()
-{
-    [[ -n "$*" ]] && grep -wi 'host\|hostname' ~/.ssh/config.d/* | grep -v '^\s*\#' | awk '{print $2}' |grep "$*";
-}
+### Dont forget to add this to your .bash_logout :
+### [[ "${SSH_AGENT_PID}" && -n "${SSH_AGENT_PID}" ]] && { kill -9 $SSH_AGENT_PID; }
 
 # ssh-add
 fSshAdd(){
@@ -54,3 +31,7 @@ fSshKeygen(){
         fi
     }  
 }
+
+# Aliases
+alias sshadd=fSshAdd
+alias sshkg=fSshKeygen
