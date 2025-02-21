@@ -1,0 +1,9 @@
+# ~/.bash/myflec.bash
+
+# Include .bash file in .bash dir.
+for file in "$HOME"/.bash/*.bash; do
+    [ -r "$file" ] && source "$file"
+done
+
+# Starship
+[[ $(command -v starship) ]] && eval "$(starship init bash)"
