@@ -4,6 +4,8 @@
 !README.md
 !myflec.exclude.lst
 !.bash_*
+!.bashrc.d
+!.bashrc.d/*
 .bash_history*
 !.gitconfig*
 !.gitconfig.d/*
