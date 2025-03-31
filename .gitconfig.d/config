@@ -16,3 +16,5 @@
 [init]
 	defaultBranch = main
 
+[diff]
+	ignoreSubmodules = dirty
