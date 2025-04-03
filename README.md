@@ -1,4 +1,6 @@
-# MyFlec - My Favorite Linux Environment Configuration
+# MyFlec
+
+My Favorite Linux Environment Configuration
 ```
          _nnnn_
         dGGGGMMb
@@ -18,7 +20,9 @@ _)      \.___.,|     .'
      `-'       `--'
 ```
 
-A comprehensive collection of shell configurations and aliases to enhance your Linux experience. For my Vim setup, see [MyVim](https://github.com/log0u7/myvim).
+A comprehensive collection of shell configurations and aliases to enhance your Linux experience. 
+
+For my own Vim setup, see [MyVim](https://github.com/log0u7/myvim).
 
 ## Table of Contents
 
