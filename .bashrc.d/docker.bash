@@ -3,6 +3,9 @@
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 
+# Sherlock
+alias sherloc="docker run --rm -it sherlock/sherlock"
+
 # Dive is a docker layer analysing tool.
 alias dive="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
 
