@@ -1,5 +1,22 @@
 # ~/.bash/functions.bash
 
+# Helper export variable and add to PATH without duplicates
+setup_tool_path() {
+    local var_name="$1"
+    local var_value="$2"
+    local bin_subpath="${3:-""}"  # Optional, e.g., "/bin"
+    
+    # Export the variable
+    export "$var_name"="$var_value"
+    
+    # Add to PATH without duplicates
+    local full_path="$var_value$bin_subpath"
+    case ":$PATH:" in
+        *":$full_path:"*) ;;
+        *) export PATH="$full_path:$PATH" ;;
+    esac
+}
+
 # Make and CD dir.
 fMkcd() {
     mkdir -p "$1" && cd $_

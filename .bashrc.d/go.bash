@@ -1,4 +1,4 @@
-# ~/.bash/go.bash
+# ~/.bashrc.d/go.bash
 
 # export Golang env
 export GOROOT=/usr/local/go
