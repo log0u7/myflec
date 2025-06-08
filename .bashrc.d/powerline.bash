@@ -1,4 +1,5 @@
-## Powerline
+# ~/.bashrc.d/powerline.bash
+
 #[[ $(command -v powerline-daemon) ]] && { 
 #    powerline-daemon -q;
 #    POWERLINE_BASH_CONTINUATION=1;

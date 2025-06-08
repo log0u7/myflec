@@ -1,4 +1,4 @@
-# ~/.bash/aliases.bash
+# ~/.bashrc.d/python.bash
 # Python and Pip aliases with dynamic virtual environment management
 
 # Python basics

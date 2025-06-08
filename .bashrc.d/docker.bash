@@ -1,4 +1,4 @@
-# ~/.bash/docker.bash
+# ~/.bashrc.d/docker.bash
 # export Docker & Docker compose env
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1

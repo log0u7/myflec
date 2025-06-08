@@ -1,3 +1,5 @@
+# ~/.bashrc.d/ssh.bash
+
 # Launch ssh-agent
 #[[ ! "${SSH_AGENT_PID}" || -z "${SSH_AGENT_PID}" ]] && { eval $(ssh-agent)&>/dev/null; }
 

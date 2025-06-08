@@ -1,4 +1,4 @@
-# ~/.bash/rust.bash
+# ~/.bashrc.d/rust.bash
 
 # export Rust env
 export CARGO_HOME="$HOME/.cargo"

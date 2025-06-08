@@ -1,3 +1,5 @@
+# ~/.bashrc.d/vim.bash
+
 ## Set Editor
 [[ $(command -v vim) ]] && { vim=$(command -v vim); export EDITOR="$vim"; export VISUAL="$vim"; }
 
