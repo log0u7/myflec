@@ -1,6 +1,13 @@
 # MyFlec
 
-My Favorite Linux Environment Configuration
+[![Shell](https://img.shields.io/badge/Shell-Bash-4EAA25?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![Platform](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org/)
+[![Prompt](https://img.shields.io/badge/Prompt-Starship-DD0B78?logo=starship&logoColor=white)](https://starship.rs/)
+[![Maintained](https://img.shields.io/badge/Maintained-yes-brightgreen)](https://github.com/log0u7/myflec)
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+
+My Favorite Linux Environment Configuration.
+
 ```
          _nnnn_
         dGGGGMMb
@@ -20,99 +27,110 @@ _)      \.___.,|     .'
      `-'       `--'
 ```
 
-A comprehensive collection of shell configurations and aliases to enhance your Linux experience. 
+A modular collection of shell configurations, aliases, and helper functions
+to enhance your Linux experience.
 
-For my own Vim setup, see [MyVim](https://github.com/log0u7/myvim).
+For my Vim setup, see [MyVim](https://github.com/log0u7/myvim).
 
 ## Table of Contents
 
 - [Features](#features)
-  - [Shell Enhancements](#shell-enhancements)
-  - [Development Tools](#development-tools)
-  - [Docker Integration](#docker-integration)
-  - [SSH Management](#ssh-management)
-  - [Git Configuration](#git-configuration)
+- [Module Overview](#module-overview)
+- [Debug Mode](#debug-mode)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Version Control](#version-control)
+- [Contributing](#contributing)
+- [Repositories](#repositories)
+- [License](#license)
 
 ## Features
 
 ### Shell Enhancements
 
-- **Custom Aliases**: Convenient shortcuts for common commands
-  - File navigation with enhanced `ls` using `lsd`
-  - Quick file extraction with the `extract` function
-  - Hexadecimal editor with color support
-  - Calculator function with `calc`
-
-- **Shell Options**: Optimized Bash behavior
-  - Autocompletion improvements
-  - Directory navigation enhancements
-  - History management with timestamps
-  - Locale configuration
-  - Colored GCC warnings and errors
-
-- **Terminal Customization**:
-  - Integration with Starship prompt (when available)
-  - Support for Byobu terminal multiplexer
-  - Optional Powerline integration
+- Custom aliases: enhanced `ls` via `lsd`, `extract` for archives, colored
+  `hexedit`, inline `calc` powered by `bc`
+- Optimized Bash options: autocompletion, directory navigation, timestamped
+  history, locale, colored GCC output
+- Terminal integration: Starship prompt, Byobu, optional Powerline
 
 ### Development Tools
 
-- **Python Environment**:
-  - Virtual environment management
-  - Package installation shortcuts
-  - Code formatting and linting tools
-  - Debugging helpers
-
-- **Go Development**:
-  - Project management helpers
-  - Build and test shortcuts
-  - Module management
-  - Code formatting tools
-
-- **Rust Development**:
-  - Cargo command shortcuts
-  - Build and test automation
-  - Documentation generation
-  - Linting and formatting
+- Python: virtualenv management, pip shortcuts, formatting and linting helpers
+- Go: project scaffolding, build and test shortcuts, module management
+- Rust: Cargo shortcuts, build automation, documentation generation, linting
+- Node.js: npm, yarn, and pnpm aliases, NVM integration, project scaffolding
 
 ### Docker Integration
 
-- **Container Management**:
-  - Shorthand aliases for Docker commands
-  - Container inspection utilities
-  - Image and volume management
-  - Docker Compose workflows
-
-- **Specialized Tools**:
-  - Sherlock container for OSINT investigations
-  - Dive for Docker layer analysis
-  - Lazydocker for container management
+- Container, image, volume, and network management shortcuts
+- Docker Compose workflows
+- Containerized tools: Sherlock (OSINT), Dive (layer analysis), Lazydocker
 
 ### SSH Management
 
-- **Key Management**:
-  - SSH key generation with `sshkg`
-  - Easy key adding with `sshadd`
-  - SSH agent management
-
-- **Host Configuration**:
-  - Domain-specific configurations
-  - Jump host setups
-  - Connection persistence
-  - Host searching
+- Key generation (`sshkg`), key adding (`sshadd`), agent helpers
+- Per-context host configuration, jump hosts, connection persistence,
+  host search (`searchhosts`)
 
 ### Git Configuration
 
-- **Multiple Identities**:
-  - Context-aware Git identities based on repository path
-  - Separate configurations for work, GitHub, and GitLab
+- Context-aware identities based on repository path (work, GitHub, GitLab)
+- Useful aliases and enhanced log visualization
 
-- **Useful Aliases**:
-  - Shortened common Git commands
-  - Enhanced logging and visualization
-  - Status overview improvements
+## Module Overview
+
+| File | Purpose |
+| --- | --- |
+| `myflec` | Loader: sources every `*.bash` module and initializes Starship |
+| `_config.bash` | Locale, history, pager (`most`), GCC colors, terminal defaults |
+| `_shopts.bash` | Bash `shopt` options |
+| `_aliases.bash` | Maps helper functions to short aliases |
+| `_functions.bash` | Core helpers: `mkcd`, `extract`, `calc`, GPG cipher, host search |
+| `docker.bash` | Docker and Docker Compose aliases and containerized tools |
+| `go.bash` | Go environment variables and aliases |
+| `python.bash` | Python and pip aliases, virtualenv helpers |
+| `rust.bash` | Rust and Cargo aliases |
+| `nodejs.bash` | Node.js, npm, yarn, pnpm aliases and project helpers |
+| `ssh.bash` | SSH key generation and agent helpers |
+| `vim.bash` | Default editor configuration and aliases |
+| `lsd.bash` | `lsd` drop-in aliases when `lsd` is available |
+| `byobu.bash` | Byobu prompt integration |
+| `powerline.bash` | Optional Powerline integration (disabled by default) |
+
+Files prefixed with `_` are core modules loaded before tool-specific ones.
+
+## Debug Mode
+
+Set `MYFLEC_DEBUG` to any non-empty value to print one confirmation line per
+loaded module at shell startup. When unset (the default), startup is silent.
+
+```bash
+MYFLEC_DEBUG=1 bash -i
+# ✅ config configuration loaded
+# ✅ shopts configuration loaded
+# ✅ aliases configuration loaded
+# ...
+```
+
+On terminals without UTF-8 support the check mark falls back to a plain
+ASCII `+` character automatically.
+
+## Requirements
+
+Every optional tool is guarded by an availability check, so MyFlec degrades
+gracefully when a tool is not installed. Recommended tools for the full
+experience:
+
+| Tool | Purpose |
+| --- | --- |
+| [lsd](https://github.com/lsd-rs/lsd) | Enhanced `ls` replacement |
+| [starship](https://starship.rs/) | Cross-shell prompt |
+| [most](https://www.jedsoft.org/most/) | Pager with color support |
+| [byobu](https://byobu.org/) | Terminal multiplexer |
+| [docker](https://docs.docker.com/) | Container runtime |
+| nvm | Node.js version manager |
+| go, rustup, python3 | Language toolchains |
 
 ## Installation
 
@@ -125,21 +143,42 @@ cat myflec/profile >> ~/.bashrc
 
 ## Version Control
 
-You may want to use git to keep track of your own setup and back it up.
+You may want to use git to track and back up your own setup.
 
-**! Use only private repositories and/or don't track any unencrypted secrets !**
+> **Warning:** use private repositories only and never track unencrypted
+> secrets, private keys, or real host configurations.
 
 1. Copy `.gitignore` to your home directory:
+
    ```bash
    cp myflec/.gitignore ~/
    ```
-   _Note: You may want to modify exceptions in `.gitignore`_
 
-2. Initialize git repository:
+   You may want to adjust the exceptions in `.gitignore` to match your setup.
+
+2. Initialize the repository:
+
    ```bash
    git init
    git remote add origin your_repository_url
-   git add *
+   git add -A
    git commit -m "Initial sync to your_repository_url"
    git push -u origin main
    ```
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md)
+before opening a pull request.
+
+## Repositories
+
+| Forge | URL |
+| --- | --- |
+| GitHub | https://github.com/log0u7/myflec |
+| GitLab | https://gitlab.com/log0u7/myflec |
+| NotABug | https://notabug.org/log0u7/myflec |
+
+## License
+
+Released under the MIT License. See [LICENSE](LICENSE) for details.
