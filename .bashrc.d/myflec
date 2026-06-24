@@ -1,9 +1,24 @@
-# ~/.bash/myflec.bash
+# ~/.bashrc.d/myflec
 
-# Include .bash file in .bash dir.
-for file in "$HOME"/.bash/*.bash; do
-    [ -r "$file" ] && source "$file"
+# Debug symbol with UTF-8/ASCII fallback
+case "${LC_ALL:-${LANG:-}}" in
+    *UTF-8*|*utf8*) _myflec_ok="✅" ;;
+    *) _myflec_ok="+" ;;
+esac
+
+# Include every *.bash module in ~/.bashrc.d/
+for _myflec_file in "$HOME"/.bashrc.d/*.bash; do
+    if [ -r "$_myflec_file" ]; then
+        source "$_myflec_file"
+        if [ -n "$MYFLEC_DEBUG" ]; then
+            _myflec_name="$(basename "$_myflec_file" .bash)"
+            _myflec_name="${_myflec_name#_}"
+            echo "$_myflec_ok ${_myflec_name} configuration loaded"
+        fi
+    fi
 done
+
+unset _myflec_ok _myflec_file _myflec_name
 
 # Starship
 [[ $(command -v starship) ]] && eval "$(starship init bash)"

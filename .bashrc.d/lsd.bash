@@ -1,2 +1,2 @@
-[[ $(command -v lsd) ]] && { alias ls="lsd"; alias lt="ls --tree"; ]
+[[ $(command -v lsd) ]] && { alias ls="lsd"; alias lt="ls --tree"; }
 

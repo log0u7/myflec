@@ -301,4 +301,4 @@ function node_prompt() {
 # Uncomment and adapt these lines for a custom prompt
 # export PS1='\u@\h:\w$(node_prompt)\$ '
 
-echo "✅ Node.js configuration loaded for .bashrc"
+
