@@ -15,23 +15,23 @@ fSshAdd(){
 fSshKeygen(){
     [[ -n "$*" ]] && {
         email="$*"
-        if [[ $email =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$  ]]; then
+        if [[ $email =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
             user=${*%@*}
             domain=${*#*@}
-            if [ -f "/home/$USER/.ssh/${domain}_${user}_rsa4096" ]; then 
-                echo "${domain}_${user}_rsa4096 keypair allready exist"
+            if [ -f "$HOME/.ssh/${domain}_${user}_rsa4096" ]; then
+                echo "${domain}_${user}_rsa4096 keypair already exists"
             else
-                ssh-keygen -q -t rsa -b 4096 -a 100 -C "$email" -f "/home/$USER/.ssh/${domain}_${user}_rsa4096"
+                ssh-keygen -q -t rsa -b 4096 -a 100 -C "$email" -f "$HOME/.ssh/${domain}_${user}_rsa4096"
             fi
-            if [ -f "/home/$USER/.ssh/${domain}_${user}_ed25519" ]; then 
-                echo "${domain}_${user}_ed25519 keypair allready exist"
+            if [ -f "$HOME/.ssh/${domain}_${user}_ed25519" ]; then
+                echo "${domain}_${user}_ed25519 keypair already exists"
             else
-                ssh-keygen -q -t ed25519 -a 100 -C "$email" -f "/home/$USER/.ssh/${domain}_${user}_ed25519"
+                ssh-keygen -q -t ed25519 -a 100 -C "$email" -f "$HOME/.ssh/${domain}_${user}_ed25519"
             fi
         else
             echo "$email is not a valid email"
         fi
-    }  
+    }
 }
 
 # Aliases
