@@ -1,0 +1,30 @@
+# mise.toml.example
+# Copy to mise.toml in your project root and customize.
+# See https://mise.jdx.dev/ for full reference.
+#
+# DO NOT commit actual versions/secrets. Use fnox for secrets.
+
+[tools]
+# Language runtimes
+node = "20"
+python = "3.12"
+go = "1.22"
+rust = "1.78"
+
+# Infrastructure
+terraform = "1.9"
+jq = "1.7"
+yq = "4.44"
+just = "1.36"
+
+# Linters / formatters
+# golangci-lint = "1.60"
+# ruff = "0.6"
+
+[env]
+# Project-specific environment variables
+# NODE_ENV = "development"
+# DEBUG = "1"
+
+# Load .env file if present (path relative to project root)
+# dotenv = ".env"

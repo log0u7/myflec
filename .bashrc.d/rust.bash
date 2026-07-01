@@ -1,13 +1,9 @@
 # ~/.bashrc.d/rust.bash
 
-# export Rust env
-export CARGO_HOME="$HOME/.cargo"
-export PATH=~/.cargo/bin:$PATH
-
-# Rust and Cargo aliases
+# Rust and Cargo aliases (always available - resolve via mise shims or system)
 alias rustc='rustc --edition 2021'             # Use Rust 2021 edition by default
 alias cargo='cargo --color always'             # Always show colored output
-alias c='cargo'                                # Short alias for cargo
+alias ca='cargo'                               # Short alias for cargo
 alias cr='cargo run'                           # Build and run the project
 alias cb='cargo build'                         # Compile the project
 alias cbr='cargo build --release'              # Compile in release mode
@@ -29,12 +25,18 @@ alias cset='cargo set-version'                 # Change package version
 alias ctree='cargo tree'                       # Show dependency tree
 alias cwatch='cargo watch -x run'              # Automatically recompile on change
 
-# Rustup aliases
-alias rustupup='rustup update'                 # Update Rust toolchain
-alias rustv='rustc --version'                  # Show Rust version
-alias cargov='cargo --version'                 # Show Cargo version
-alias rusttool='rustup show'                   # Show active toolchain
-alias rustdef='rustup default stable'          # Set Rust stable as default
-alias rustnightly='rustup default nightly'     # Set Rust nightly as default
-alias rustfmt='rustup component add rustfmt'   # Install Rust formatter
-alias clippy='rustup component add clippy'     # Install Clippy linter
+# Rustup and toolchain management (fallback when mise is not available)
+if ! command -v mise >/dev/null 2>&1; then
+    alias rustupup='rustup update'                 # Update Rust toolchain
+    alias rustv='rustc --version'                  # Show Rust version
+    alias cargov='cargo --version'                 # Show Cargo version
+    alias rusttool='rustup show'                   # Show active toolchain
+    alias rustdef='rustup default stable'          # Set Rust stable as default
+    alias rustnightly='rustup default nightly'     # Set Rust nightly as default
+    alias rustfmt='rustup component add rustfmt'   # Install Rust formatter
+    alias clippy='rustup component add clippy'     # Install Clippy linter
+fi
+
+# Rustup env
+export CARGO_HOME="$HOME/.cargo"
+export PATH=~/.cargo/bin:$PATH

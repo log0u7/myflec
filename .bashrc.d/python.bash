@@ -8,15 +8,17 @@ alias ipy='ipython'                            # Launch IPython
 alias pyv='python --version'                   # Show Python version
 alias pywhich='which python'                   # Find Python executable
 
-# Pip package management
-alias pipi='pip install'                       # Install package
-alias pips='pip show'                          # Show package details
-alias pipu='pip uninstall'                     # Uninstall package
-alias pipl='pip list'                          # List installed packages
-alias pipup='pip install --upgrade'            # Upgrade package
-alias pipreq='pip freeze > requirements.txt'   # Generate requirements file
-alias pipinst='pip install -r requirements.txt' # Install from requirements file
-alias pipcache='pip cache purge'               # Clear pip cache
+# Pip package management (fallback when mise is not available)
+if ! command -v mise >/dev/null 2>&1; then
+    alias pipi='pip install'                       # Install package
+    alias pips='pip show'                          # Show package details
+    alias pipu='pip uninstall'                     # Uninstall package
+    alias pipl='pip list'                          # List installed packages
+    alias pipup='pip install --upgrade'            # Upgrade package
+    alias pipreq='pip freeze > requirements.txt'   # Generate requirements file
+    alias pipinst='pip install -r requirements.txt' # Install from requirements file
+    alias pipcache='pip cache purge'               # Clear pip cache
+fi
 
 # Virtual environments with argument
 venv() {

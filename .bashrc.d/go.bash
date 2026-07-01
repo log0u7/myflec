@@ -1,21 +1,26 @@
 # ~/.bashrc.d/go.bash
 
-# export Golang env
-export GOROOT=/usr/local/go
-setup_tool_path "GOROOT" "/usr/local/go" "/bin"
-
-export GOPATH="${GOPATH:-$HOME/go}"
-export GOBIN="${GOBIN:-$GOPATH/bin}"
-setup_tool_path "GOPATH" "$GOPATH" "/bin"
-
-# Go basics
+# Go aliases (always available - resolve via mise shims or system go)
 alias gover='go version'                        # Show Go version
-alias gopath='echo $GOPATH'                     # Show Go workspace path
-alias gobin='echo $GOBIN'                       # Show Go binary path
 alias gore='go run'                             # Run Go code
 alias gob='go build'                            # Build Go project
 alias got='go test ./...'                       # Run all tests
 alias gobench='go test -bench=.'                # Run benchmarks
+alias gomod='go mod tidy'                        # Clean up module dependencies
+alias goup='go get -u ./...'                    # Update all dependencies
+alias golist='go list -m all'                    # List all modules
+alias gorebuild='go clean && go build'           # Clean and rebuild project
+alias goclean='go clean -cache'                  # Clear build cache
+alias gorunmain='go run main.go'                 # Run main.go
+alias goinstall='go install'                     # Install Go binary
+alias gofmt='gofmt -w .'                         # Format Go code
+alias govet='go vet ./...'                       # Static code analysis
+alias golint='golangci-lint run'                 # Run Go linter (requires golangci-lint)
+alias godo='godoc -http=:6060'                   # Serve Go documentation locally
+alias goenv='go env'                             # Show Go environment variables
+alias godl='go mod download'                     # Download dependencies
+alias gopath='echo $GOPATH'                      # Show Go workspace path
+alias gobin='echo $GOBIN'                        # Show Go binary path
 
 # Go project management
 goinit() {
@@ -35,23 +40,11 @@ gocd() {
     cd "$GOPATH/src/$1" && echo "Switched to Go project '$1'."
 }
 
-# Go module management
-alias gomod='go mod tidy'                        # Clean up module dependencies
-alias goup='go get -u ./...'                    # Update all dependencies
-alias golist='go list -m all'                    # List all modules
-
-# Go build & run
-alias gorebuild='go clean && go build'           # Clean and rebuild project
-alias goclean='go clean -cache'                  # Clear build cache
-alias gorunmain='go run main.go'                 # Run main.go
-alias goinstall='go install'                     # Install Go binary
-
-# Go formatting & linting
-alias gofmt='gofmt -w .'                         # Format Go code
-alias govet='go vet ./...'                       # Static code analysis
-alias golint='golangci-lint run'                 # Run Go linter (requires golangci-lint)
-
-# Miscellaneous
-alias godo='godoc -http=:6060'                   # Serve Go documentation locally
-alias goenv='go env'                             # Show Go environment variables
-alias godl='go mod download'                     # Download dependencies
+# Go environment setup (fallback when mise is not available)
+if ! command -v mise >/dev/null 2>&1; then
+    export GOROOT=/usr/local/go
+    setup_tool_path "GOROOT" "/usr/local/go" "/bin"
+    export GOPATH="${GOPATH:-$HOME/go}"
+    export GOBIN="${GOBIN:-$GOPATH/bin}"
+    setup_tool_path "GOPATH" "$GOPATH" "/bin"
+fi
