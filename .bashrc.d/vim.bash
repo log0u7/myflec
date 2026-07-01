@@ -1,15 +1,19 @@
 # ~/.bashrc.d/vim.bash
 
-## Set Editor
-[[ $(command -v vim) ]] && { vim=$(command -v vim); export EDITOR="$vim"; export VISUAL="$vim"; }
+# Set default editor
+if [ -x "$(command -v vim)" ]; then
+    EDITOR="$(command -v vim)"
+    export EDITOR VISUAL="$EDITOR"
+fi
 
-# Aliases
 alias vi="vim"
-# If shell is spawned by vim, allow :q to exit; otherwise warn.
-_vim_parent=$(ps -ef | awk "\$2 == $(ps -ef | awk "\$2 == $$ {print \$3}") {print \$8}")
-if echo "$_vim_parent" | grep -q vi; then
+
+# :q signature alias.
+# vim and neovim both export $VIMRUNTIME into shells they spawn (:sh, :terminal).
+# Testing that variable is instant (no subprocess) and covers both editors.
+# Manual validation required: run :q inside a vim :terminal and outside vim.
+if [ -n "${VIMRUNTIME:-}" ]; then
     alias :q='exit'
 else
-    alias :q='echo "Not in vi{m}!"'
+    alias :q='echo "Not in vim!"'
 fi
-unset _vim_parent
