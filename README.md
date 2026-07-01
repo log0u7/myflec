@@ -35,7 +35,9 @@ For my Vim setup, see [MyVim](https://github.com/log0u7/myvim).
 ## Table of Contents
 
 - [Features](#features)
+- [Load Order](#load-order)
 - [Module Overview](#module-overview)
+- [SSH Identity Model](#ssh-identity-model)
 - [Debug Mode](#debug-mode)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -78,6 +80,32 @@ For my Vim setup, see [MyVim](https://github.com/log0u7/myvim).
 - Context-aware identities based on repository path (work, GitHub, GitLab)
 - Useful aliases and enhanced log visualization
 
+## Load Order
+
+The loader (`.bashrc.d/myflec`) is invoked from `~/.bashrc` via the `profile`
+snippet. It sources core modules (prefixed `_`) first, then tool modules, both
+in alphabetical order.
+
+```mermaid
+flowchart TD
+    P["~/.bashrc (profile snippet)"] --> L[".bashrc.d/myflec (loader)"]
+    L --> C["Core modules: _*.bash (alphabetical)"]
+    C --> T["Tool modules: *.bash (alphabetical)"]
+    T --> S["starship init (if available)"]
+
+    C -.-> C1["_aliases.bash"]
+    C -.-> C2["_config.bash"]
+    C -.-> C3["_functions.bash"]
+    C -.-> C4["_shopts.bash"]
+
+    T -.-> T1["docker / go / nodejs / python / rust"]
+    T -.-> T2["ssh / vim / lsd / byobu / powerline"]
+```
+
+Note: `.bash_aliases` is sourced separately by the default Debian/Ubuntu
+`.bashrc` before the profile snippet runs. It coexists with `.bashrc.d/` on
+purpose and is kept as the native Debian mechanism.
+
 ## Module Overview
 
 | File | Purpose |
@@ -100,6 +128,42 @@ For my Vim setup, see [MyVim](https://github.com/log0u7/myvim).
 
 Files prefixed with `_` are core modules loaded before tool-specific ones.
 
+## SSH Identity Model
+
+Two orthogonal axes control identity when working with git forges:
+
+- **Git identity (name/email)**: driven by the repository directory via
+  `includeIf "gitdir:..."` in `.gitconfig`. One identity per project tree.
+- **SSH key (which account)**: driven by the SSH host alias used in the
+  remote URL. One key per alias.
+
+### Host aliases
+
+The default block for each forge uses the personal key. Extra identities use
+a host alias (`<forge>-<label>`). Clone with the alias to use a different key:
+
+```bash
+# personal (default)
+git clone git@github.com:owner/repo.git
+
+# work identity
+git clone git@github.com-work:owner/repo.git
+```
+
+Key naming convention: `<forge>_<label>_<type>`
+(e.g. `github.com_perso_ed25519`, `gitlab.com_work_ed25519`).
+
+### Correspondence table
+
+| Project directory | Git identity (includeIf) | SSH remote to use |
+| --- | --- | --- |
+| `~/projets/github/` | personal GitHub identity | `git@github.com:owner/repo` |
+| `~/projets/gitlab/` | personal GitLab identity | `git@gitlab.com:owner/repo` |
+| `~/projets/work/` | work identity | `git@github.com-work:owner/repo` |
+
+The two axes are independent: you can commit as your work identity in a
+directory while pushing to a personal fork, or vice versa.
+
 ## Debug Mode
 
 Set `MYFLEC_DEBUG` to any non-empty value to print one confirmation line per
@@ -107,9 +171,9 @@ loaded module at shell startup. When unset (the default), startup is silent.
 
 ```bash
 MYFLEC_DEBUG=1 bash -i
-# ✅ config configuration loaded
-# ✅ shopts configuration loaded
-# ✅ aliases configuration loaded
+# + config configuration loaded
+# + shopts configuration loaded
+# + aliases configuration loaded
 # ...
 ```
 
@@ -148,8 +212,7 @@ deploy the repository to your home directory, and keep sensitive files
 (real host configurations, private keys, real identities) out of version
 control.
 
-If you do want to track your own `$HOME` in a private repository, here is
-how to set it up:
+If you want to track your own `$HOME` in a private repository:
 
 > **Warning:** use private repositories only and never track unencrypted
 > secrets, private keys, or real host configurations.
