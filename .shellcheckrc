@@ -1,0 +1,13 @@
+# ShellCheck configuration for myflec
+# https://www.shellcheck.net/wiki/Directive
+
+# SC1090: ShellCheck can't follow non-constant source.
+# The loader sources modules dynamically via a variable; this is intentional.
+disable=SC1090
+
+# SC1091: Not following a sourced file that does not exist in the repo.
+# Several modules conditionally source runtime files (nvm.sh, virtualenv
+# activate, byobu prompt) that are installed on the target system but are
+# not part of this repository. Suppressed globally; each call-site is
+# already guarded by [ -s ... ] or [ -r ... ].
+disable=SC1091

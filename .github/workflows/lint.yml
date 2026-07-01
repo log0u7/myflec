@@ -18,18 +18,28 @@ jobs:
       - name: Syntax check (bash -n)
         run: |
           fail=0
-          for f in .bashrc.d/*.bash; do
+          for f in .bashrc.d/*.bash .bashrc.d/myflec; do
             bash -n "$f" || { echo "Syntax error: $f"; fail=1; }
           done
           exit "$fail"
 
-      - name: Shellcheck
+      - name: Shellcheck (-x, uses .shellcheckrc)
         run: |
           fail=0
-          for f in .bashrc.d/*.bash; do
-            shellcheck -s bash -e SC1090,SC1091 "$f" || fail=1
+          for f in .bashrc.d/*.bash .bashrc.d/myflec; do
+            shellcheck -x -s bash "$f" || fail=1
           done
           exit "$fail"
+
+      - name: Smoke test (loader exits cleanly)
+        run: HOME=$PWD bash -c '. .bashrc.d/myflec'
+
+      - name: Smoke test (MYFLEC_DEBUG lists all modules)
+        run: |
+          count=$(HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/myflec' 2>&1 \
+            | grep -c 'configuration loaded' || true)
+          echo "Modules loaded: $count"
+          [ "$count" -gt 0 ] || { echo "No modules reported"; exit 1; }
 
       - name: Yamllint
         run: |
