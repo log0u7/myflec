@@ -2,8 +2,8 @@
 # Python and Pip aliases with dynamic virtual environment management
 
 # Python basics
-alias py='python'                              # Short alias for Python
-alias py3='python3'                            # Ensure using Python 3
+alias py='python3'                             # Default to Python 3
+alias py3='python3'                            # Explicit Python 3
 alias ipy='ipython'                            # Launch IPython
 alias pyv='python --version'                   # Show Python version
 alias pywhich='which python'                   # Find Python executable
@@ -46,10 +46,6 @@ venvdel() {
     fi
     rm -rf "$1" && echo "Virtual environment '$1' deleted."
 }
-
-# Formatting & Linting
-alias black='black'                            # Format Python files with Black
-alias flake8='flake8'                          # Run flake8 linter
 
 # Running & debugging
 alias pyrun='python main.py'                   # Run main.py
