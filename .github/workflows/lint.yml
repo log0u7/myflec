@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install shellcheck
-        run: sudo apt-get install -y shellcheck
+      - name: Install shellcheck and yamllint
+        run: sudo apt-get install -y shellcheck yamllint
 
       - name: Syntax check (bash -n)
         run: |
@@ -30,3 +30,17 @@ jobs:
             shellcheck -s bash -e SC1090,SC1091 "$f" || fail=1
           done
           exit "$fail"
+
+      - name: Yamllint
+        run: |
+          yamllint -d '{extends: default, rules: {line-length: disable, document-start: disable, truthy: disable}}' \
+            .github/workflows/lint.yml \
+            .gitlab-ci.yml
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: actionlint
+        uses: rhysd/actionlint@v1

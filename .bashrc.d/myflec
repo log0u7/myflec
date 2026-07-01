@@ -6,19 +6,34 @@ case "${LC_ALL:-${LANG:-}}" in
     *) _myflec_ok="+" ;;
 esac
 
-# Include every *.bash module in ~/.bashrc.d/
-for _myflec_file in "$HOME"/.bashrc.d/*.bash; do
-    if [ -r "$_myflec_file" ]; then
-        source "$_myflec_file"
-        if [ -n "$MYFLEC_DEBUG" ]; then
-            _myflec_name="$(basename "$_myflec_file" .bash)"
-            _myflec_name="${_myflec_name#_}"
-            echo "$_myflec_ok ${_myflec_name} configuration loaded"
-        fi
+# Internal loader: source a module and optionally print a debug line
+_myflec_load() {
+    local _f="$1"
+    [ -r "$_f" ] || return
+    source "$_f"
+    if [ -n "$MYFLEC_DEBUG" ]; then
+        local _name
+        _name="$(basename "$_f" .bash)"
+        _name="${_name#_}"
+        echo "$_myflec_ok ${_name} configuration loaded"
     fi
+}
+
+# 1. Core modules first (prefixed with _), in alphabetical order
+for _myflec_file in "$HOME"/.bashrc.d/_*.bash; do
+    _myflec_load "$_myflec_file"
 done
 
-unset _myflec_ok _myflec_file _myflec_name
+# 2. Tool modules (everything else), in alphabetical order
+for _myflec_file in "$HOME"/.bashrc.d/*.bash; do
+    case "$(basename "$_myflec_file")" in
+        _*) continue ;;
+    esac
+    _myflec_load "$_myflec_file"
+done
+
+unset _myflec_ok _myflec_file
+unset -f _myflec_load
 
 # Starship
 [[ $(command -v starship) ]] && eval "$(starship init bash)"

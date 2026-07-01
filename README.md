@@ -143,7 +143,13 @@ cat myflec/profile >> ~/.bashrc
 
 ## Version Control
 
-You may want to use git to track and back up your own setup.
+The recommended workflow keeps `$HOME` out of git entirely. Use `rsync` to
+deploy the repository to your home directory, and keep sensitive files
+(real host configurations, private keys, real identities) out of version
+control.
+
+If you do want to track your own `$HOME` in a private repository, here is
+how to set it up:
 
 > **Warning:** use private repositories only and never track unencrypted
 > secrets, private keys, or real host configurations.
@@ -154,7 +160,7 @@ You may want to use git to track and back up your own setup.
    cp myflec/.gitignore ~/
    ```
 
-   You may want to adjust the exceptions in `.gitignore` to match your setup.
+   Adjust the exceptions in `.gitignore` to match your setup.
 
 2. Initialize the repository:
 
@@ -162,7 +168,7 @@ You may want to use git to track and back up your own setup.
    git init
    git remote add origin your_repository_url
    git add -A
-   git commit -m "Initial sync to your_repository_url"
+   git commit -m "Initial commit"
    git push -u origin main
    ```
 

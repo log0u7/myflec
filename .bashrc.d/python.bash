@@ -48,13 +48,11 @@ venvdel() {
 }
 
 # Formatting & Linting
-alias black='black .'                          # Format Python files with Black
-alias flake8='flake8 .'                        # Run flake8 linter
-alias pylint='pylint'                          # Run pylint linter
+alias black='black'                            # Format Python files with Black
+alias flake8='flake8'                          # Run flake8 linter
 
 # Running & debugging
 alias pyrun='python main.py'                   # Run main.py
-alias pytest='pytest'                          # Run tests with pytest
 alias pydebug='python -m pdb'                  # Start Python debugger
 alias pytime='python -m timeit'                # Run time performance tests
 
