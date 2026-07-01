@@ -2,7 +2,11 @@
 
 # export Golang env
 export GOROOT=/usr/local/go
-export PATH=$GOROOT/bin:$PATH
+setup_tool_path "GOROOT" "/usr/local/go" "/bin"
+
+export GOPATH="${GOPATH:-$HOME/go}"
+export GOBIN="${GOBIN:-$GOPATH/bin}"
+setup_tool_path "GOPATH" "$GOPATH" "/bin"
 
 # Go basics
 alias gover='go version'                        # Show Go version
