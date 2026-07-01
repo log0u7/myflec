@@ -12,6 +12,7 @@
 !.gitconfig*
 !.gitconfig.d/*
 !.gitignore
+!.shellcheckrc
 !.ssh/
 !.ssh/config*
 !.ssh/config.d/*
