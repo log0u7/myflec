@@ -4,7 +4,7 @@ default:
 stages:
   - lint
 
-lint:
+shellcheck:
   stage: lint
   before_script:
     - apt-get update -qq && apt-get install -y -qq bash shellcheck
@@ -21,3 +21,13 @@ lint:
         shellcheck -s bash -e SC1090,SC1091 "$f" || fail=1
       done
       exit "$fail"
+
+yamllint:
+  stage: lint
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq yamllint
+  script:
+    - |
+      yamllint -d '{extends: default, rules: {line-length: disable, document-start: disable, truthy: disable}}' \
+        .github/workflows/lint.yml \
+        .gitlab-ci.yml
