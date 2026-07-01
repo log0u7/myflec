@@ -27,4 +27,6 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 
 # Terminal type: only set if the environment has not already provided one.
 # Let the real terminal emulator or multiplexer (tmux, byobu) set TERM.
-[ -z "${TERM:-}" ] && export TERM=xterm-256color
+if [ -z "${TERM:-}" ]; then
+    export TERM=xterm-256color
+fi
