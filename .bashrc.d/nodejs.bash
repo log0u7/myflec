@@ -1,11 +1,9 @@
 # ~/.bashrc.d/nodejs.bash
 
-export NODE_ENV="development"
 export NODE_OPTIONS="--max-old-space-size=4096"
-export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 
 setup_tool_path "NPM_CONFIG_PREFIX" "$HOME/.npm-global" "/bin"
-setup_tool_path "PNPM_HOME" "$HOME/.local/share/pnpm"
+[ -d "$HOME/.local/share/pnpm" ] && setup_tool_path "PNPM_HOME" "$HOME/.local/share/pnpm"
 
 # NVM (Node Version Manager) Configuration
 export NVM_DIR="$HOME/.nvm"
@@ -182,15 +180,6 @@ function node-install() {
     fi
     nvm install "$1"
     nvm use "$1"
-}
-
-# Analyze bundle size
-function node-analyze() {
-    if command -v npx &> /dev/null; then
-        npx bundle-analyzer
-    else
-        echo "npx not available"
-    fi
 }
 
 # Generate .gitignore for Node.js
