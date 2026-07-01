@@ -48,7 +48,6 @@ alias dcps='docker compose ps'                # Show running services
 alias dcbuild='docker compose build'          # Build images for services
 alias dcstop='docker compose stop'            # Stop services
 alias dcrm='docker compose rm'                # Remove stopped services
-alias dcrestart='docker compose restart'      # Restart services
 
 # Miscellaneous
 alias dinspect='docker inspect'               # Inspect a container or image

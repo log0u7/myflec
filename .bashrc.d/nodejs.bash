@@ -12,13 +12,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# Basic aliases
-alias node='node'
-alias npm='npm'
-alias npx='npx'
-alias yarn='yarn'
-alias pnpm='pnpm'
-
 # NPM shortcuts
 alias ni='npm install'
 alias nid='npm install --save-dev'
@@ -69,11 +62,11 @@ alias pd='pnpm dev'
 function node-init() {
     local project_name=${1:-"my-node-project"}
     local template=${2:-"basic"}
-    
-    echo "🚀 Creating Node.js project: $project_name"
+
+    echo "Creating Node.js project: $project_name"
     mkdir -p "$project_name"
-    cd "$project_name"
-    
+    cd "$project_name" || return
+
     case $template in
         "express")
             npm init -y
@@ -103,43 +96,43 @@ app.listen(PORT, () => {
             echo "console.log('Hello Node.js!');" > index.js
             ;;
     esac
-    
-    echo "✅ Project $project_name created with $template template"
+
+    echo "Project $project_name created with $template template"
 }
 
 # Clean node modules and reinstall
 function node-clean() {
-    echo "🧹 Cleaning node_modules and lock files..."
+    echo "Cleaning node_modules and lock files..."
     rm -rf node_modules package-lock.json yarn.lock pnpm-lock.yaml
     if [ -f "package.json" ]; then
-        echo "📦 Reinstalling dependencies..."
+        echo "Reinstalling dependencies..."
         npm install
-        echo "✅ Cleanup completed"
+        echo "Cleanup completed"
     else
-        echo "❌ No package.json found"
+        echo "No package.json found"
     fi
 }
 
 # Display available scripts
 function node-scripts() {
     if [ -f "package.json" ]; then
-        echo "📜 Available scripts:"
-        cat package.json | grep -A 20 '"scripts"' | grep -E '    ".*":' | sed 's/.*"\(.*\)".*/  \1/' | sort
+        echo "Available scripts:"
+        grep -A 20 '"scripts"' package.json | grep -E '    ".*":' | sed 's/.*"\(.*\)".*/  \1/' | sort
     else
-        echo "❌ No package.json found"
+        echo "No package.json found"
     fi
 }
 
 # Check vulnerabilities and fix them
 function node-audit() {
-    echo "🔍 Checking for vulnerabilities..."
+    echo "Checking for vulnerabilities..."
     npm audit
     echo ""
-    read -p "Do you want to automatically fix vulnerabilities? (y/N): " -n 1 -r
+    read -r -p "Do you want to automatically fix vulnerabilities? (y/N): " -n 1
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         npm audit fix
-        echo "✅ Fix completed"
+        echo "Fix completed"
     fi
 }
 
@@ -149,7 +142,6 @@ function npm-search() {
         echo "Usage: npm-search <package-name>"
         return 1
     fi
-    echo "🔍 Searching packages for: $1"
     npm search "$1" | head -20
 }
 
@@ -164,21 +156,17 @@ function npm-info() {
 
 # List installed global packages
 function npm-globals() {
-    echo "🌍 Installed global packages:"
     npm list -g --depth=0
 }
 
 # Update all global packages
 function npm-update-globals() {
-    echo "⬆️  Updating global packages..."
     npm update -g
-    echo "✅ Update completed"
 }
 
 # Switch Node version with NVM
 function node-use() {
     if [ -z "$1" ]; then
-        echo "Available Node.js versions:"
         nvm list
         return 1
     fi
@@ -199,16 +187,16 @@ function node-install() {
 # Analyze bundle size
 function node-analyze() {
     if command -v npx &> /dev/null; then
-        echo "📊 Analyzing bundle size..."
         npx bundle-analyzer
     else
-        echo "❌ npx not available"
+        echo "npx not available"
     fi
 }
 
 # Generate .gitignore for Node.js
 function node-gitignore() {
-    echo "# Dependencies
+    cat > .gitignore << 'EOF'
+# Dependencies
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -250,23 +238,20 @@ coverage/
 Thumbs.db
 
 # Others
-.eslintcache" > .gitignore
-    echo "✅ .gitignore created for Node.js"
+.eslintcache
+EOF
+    echo ".gitignore created for Node.js"
 }
 
 # Display dependency tree
 function node-tree() {
     local depth=${1:-2}
-    echo "🌳 Dependency tree (depth: $depth):"
     npm list --depth="$depth"
 }
 
 # Check outdated packages
 function node-outdated() {
-    echo "📅 Outdated packages:"
     npm outdated
-    echo ""
-    echo "💡 Use 'npm update' to update packages"
 }
 
 # Bash completions for NPM
@@ -274,31 +259,15 @@ if command -v npm &> /dev/null; then
     eval "$(npm completion bash 2>/dev/null)"
 fi
 
-# Display Node.js version on startup (optional)
-function show-node-info() {
-    if command -v node &> /dev/null; then
-        echo "🟢 Node.js $(node --version) | NPM $(npm --version)"
-        if command -v nvm &> /dev/null; then
-            echo "📍 NVM: $(nvm current)"
-        fi
-    fi
-}
-
-# Uncomment the following line to display Node.js info on startup
+# Display Node.js version on startup (optional, uncomment to enable)
+# function show-node-info() {
+#     if command -v node &> /dev/null; then
+#         echo "Node.js $(node --version) | NPM $(npm --version)"
+#         if command -v nvm &> /dev/null; then
+#             echo "NVM: $(nvm current)"
+#         fi
+#     fi
+# }
 # show-node-info
-
-# Custom prompt with Node.js info (optional)
-function node_prompt() {
-    if [ -f "package.json" ]; then
-        local node_version=""
-        if command -v node &> /dev/null; then
-            node_version="⚡$(node --version)"
-        fi
-        echo " $node_version"
-    fi
-}
-
-# Uncomment and adapt these lines for a custom prompt
-# export PS1='\u@\h:\w$(node_prompt)\$ '
 
 

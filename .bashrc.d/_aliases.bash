@@ -1,4 +1,4 @@
-# ~/.bashrc.d/aliases.bash
+# ~/.bashrc.d/_aliases.bash
 
 # Function mapping aliases
 alias calc=fCalc

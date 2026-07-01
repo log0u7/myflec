@@ -6,7 +6,7 @@ dotfiles collection, but suggestions, fixes, and improvements are welcome.
 ## Ground Rules
 
 - Keep modules self-contained: one tool or concern per `.bashrc.d/*.bash` file.
-- Guard every optional tool with a availability check (for example
+- Guard every optional tool with an availability check (for example
   `command -v lsd`), so a missing tool never breaks shell startup.
 - Never commit secrets, private keys, real hostnames, or personal identities.
   The repository ships anonymized examples only.

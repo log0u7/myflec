@@ -5,5 +5,11 @@
 
 # Aliases
 alias vi="vim"
-#If shell is spawned by vim quit by :q
-[[ $(ps -ef |awk "\$2 == $(ps -ef | awk "\$2 == $$ {print \$3}") {print \$8}" |grep vi) ]]&& alias :q='exit' || alias :q='echo "Not in vi{m} !"';
+# If shell is spawned by vim, allow :q to exit; otherwise warn.
+_vim_parent=$(ps -ef | awk "\$2 == $(ps -ef | awk "\$2 == $$ {print \$3}") {print \$8}")
+if echo "$_vim_parent" | grep -q vi; then
+    alias :q='exit'
+else
+    alias :q='echo "Not in vi{m}!"'
+fi
+unset _vim_parent

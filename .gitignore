@@ -2,6 +2,8 @@
 *
 # Except :
 !README.md
+!CONTRIBUTING.md
+!LICENSE
 !myflec.exclude.lst
 !.bash_*
 !.bashrc.d
@@ -13,3 +15,7 @@
 !.ssh/
 !.ssh/config*
 !.ssh/config.d/*
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
+!.gitlab-ci.yml

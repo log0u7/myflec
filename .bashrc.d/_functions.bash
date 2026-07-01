@@ -1,4 +1,4 @@
-# ~/.bash/functions.bash
+# ~/.bashrc.d/_functions.bash
 
 # Helper export variable and add to PATH without duplicates
 setup_tool_path() {
@@ -19,7 +19,7 @@ setup_tool_path() {
 
 # Make and CD dir.
 fMkcd() {
-    mkdir -p "$1" && cd $_
+    mkdir -p "$1" && cd "$1" || return
 }
 
 # Quick file extraction
@@ -46,15 +46,15 @@ fExtract() {
 
 # GPG Symetric Cipher
 fSimpleGpgFileCipher(){
-  for vFile in "$*"; do
+  for vFile in "$@"; do
     [[ -s "$vFile" ]] && gpg -c "$vFile"
   done
 }
 
 # GPG Uncipher
 fSimpleGpgFileUncipher(){
-  for vFile in "$*"; do
-    [[ -s "$vFile" ]] && gpg "$vFile";
+  for vFile in "$@"; do
+    [[ -s "$vFile" ]] && gpg "$vFile"
   done
 }
 

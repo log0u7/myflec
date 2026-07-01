@@ -1,4 +1,4 @@
-# ~/.bash/config.bash
+# ~/.bashrc.d/_config.bash
 
 # Disconnect after 5min inactivity
 #Disable w/ `export TMOUT=0` or `unset TMOUT`

@@ -1,4 +1,4 @@
-# ~/.bash/shopts.bash
+# ~/.bashrc.d/_shopts.bash
 # Additional shell optional behaviors
 
 shopt -s autocd                  # Auto cd dirs
