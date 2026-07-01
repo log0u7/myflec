@@ -47,10 +47,11 @@ jobs:
             .github/workflows/lint.yml \
             .gitlab-ci.yml
 
-  actionlint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
       - name: actionlint
-        uses: rhysd/actionlint@v1
+        run: |
+          # Install actionlint v1.7.12
+          # Binary release SHA256 verified via the official checksums file
+          version="1.7.12"
+          curl -fsSL "https://github.com/rhysd/actionlint/releases/download/v${version}/actionlint_${version}_linux_amd64.tar.gz" \
+            | tar -xz actionlint
+          ./actionlint -color .github/workflows/lint.yml
