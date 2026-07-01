@@ -8,4 +8,5 @@ profile
 .gitignore
 .github
 .gitlab-ci.yml
+.shellcheckrc
 .npm
