@@ -1,0 +1,32 @@
+name: lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Syntax check (bash -n)
+        run: |
+          fail=0
+          for f in .bashrc.d/*.bash; do
+            bash -n "$f" || { echo "Syntax error: $f"; fail=1; }
+          done
+          exit "$fail"
+
+      - name: Shellcheck
+        run: |
+          fail=0
+          for f in .bashrc.d/*.bash; do
+            shellcheck -s bash -e SC1090,SC1091 "$f" || fail=1
+          done
+          exit "$fail"
