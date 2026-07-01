@@ -5,11 +5,6 @@ export NODE_OPTIONS="--max-old-space-size=4096"
 setup_tool_path "NPM_CONFIG_PREFIX" "$HOME/.npm-global" "/bin"
 [ -d "$HOME/.local/share/pnpm" ] && setup_tool_path "PNPM_HOME" "$HOME/.local/share/pnpm"
 
-# NVM (Node Version Manager) Configuration
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
 # NPM shortcuts
 alias ni='npm install'
 alias nid='npm install --save-dev'
@@ -162,25 +157,32 @@ function npm-update-globals() {
     npm update -g
 }
 
-# Switch Node version with NVM
-function node-use() {
-    if [ -z "$1" ]; then
-        nvm list
-        return 1
-    fi
-    nvm use "$1"
-}
+# NVM (Node Version Manager) - fallback when mise is not available
+if ! command -v mise >/dev/null 2>&1; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# Install and use a Node version
-function node-install() {
-    if [ -z "$1" ]; then
-        echo "Usage: node-install <version>"
-        echo "Example: node-install 18.17.0"
-        return 1
-    fi
-    nvm install "$1"
-    nvm use "$1"
-}
+    # Switch Node version with NVM
+    function node-use() {
+        if [ -z "$1" ]; then
+            nvm list
+            return 1
+        fi
+        nvm use "$1"
+    }
+
+    # Install and use a Node version
+    function node-install() {
+        if [ -z "$1" ]; then
+            echo "Usage: node-install <version>"
+            echo "Example: node-install 18.17.0"
+            return 1
+        fi
+        nvm install "$1"
+        nvm use "$1"
+    }
+fi
 
 # Generate .gitignore for Node.js
 function node-gitignore() {
@@ -243,9 +245,14 @@ function node-outdated() {
     npm outdated
 }
 
-# Bash completions for NPM
+# Bash completions for NPM (only if mise not managing it)
 if command -v npm &> /dev/null; then
     eval "$(npm completion bash 2>/dev/null)"
+fi
+
+# Bash completions for yarn
+if command -v yarn &> /dev/null; then
+    eval "$(yarn completion bash 2>/dev/null)"
 fi
 
 # Display Node.js version on startup (optional, uncomment to enable)

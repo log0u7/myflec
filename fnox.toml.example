@@ -1,0 +1,44 @@
+# fnox.toml.example
+# Secrets configuration with multiple providers.
+# Copy to fnox.toml in your project root and customize.
+# DO NOT COMMIT real secrets. See https://fnox.jdx.dev/.
+#
+# Provides are used to encrypt secrets in git (age, KMS) or
+# reference remote secrets (AWS SM, 1Password, Bitwarden, ...).
+
+[providers]
+# Age encryption (works with SSH keys, offline)
+# Generate a key: age-keygen -o ~/.ssh/age.key
+# age = { public_key = "age1..." }
+
+# AWS KMS encryption (secrets encrypted in git)
+# aws-kms = { key_id = "arn:aws:kms:us-east-1:..." }
+
+# Cloud secret storage
+# aws-sm = {}     # AWS Secrets Manager
+# azure-sm = {}   # Azure Key Vault
+# bitwarden = {}  # Bitwarden (password manager provider)
+
+# Password managers
+# 1password = { vault = "my-vault" }
+
+[secrets]
+# Encrypted inline (age provider)
+# DATABASE_URL = "ENC[AGE, ...]"
+
+# Remote reference (cloud provider)
+# API_KEY = { provider = "aws-sm", ref = "prod/my-app/api-key" }
+# GH_TOKEN = { provider = "1password", ref = "op://vault/item/field" }
+
+# Plain text (dev defaults only, never commit real secrets)
+# DATABASE_URL = "postgresql://localhost:5432/dev"
+
+[profiles.dev]
+# Development overrides
+# DATABASE_URL = "postgresql://localhost:5432/dev"
+
+[profiles.staging]
+# DATABASE_URL = { provider = "aws-sm", ref = "staging/my-app/db-url" }
+
+[profiles.prod]
+# DATABASE_URL = { provider = "aws-sm", ref = "prod/my-app/db-url" }
