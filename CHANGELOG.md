@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vim module: detect vim subshell via VIMRUNTIME instead of ps
 - Config: stop forcing LC_ALL, guard LANG and TERM
 - Loader: core-first two-pass, internal `_myflec_load()` helper, unset cleanup
+- mdq: switch to docker-run image (yshavit/mdq:v0.10.0)
 
 ### Fixed
 
@@ -55,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Python: removed no-op black/flake8 aliases
 - SSH config.d/private: `Identityfile` -> `IdentityFile` (case fix)
 - Docker: removed duplicate `dcrestart` alias
+- CI: use tlrc instead of unavailable tldr in mise install (demo workflow)
+- mdq: fix broken repository link (ysugimoto -> yshavit)
 - Various typos in README, aliases, comments
 
 ## [0.2.0] - 2025-04-03
