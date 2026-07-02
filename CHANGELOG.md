@@ -58,6 +58,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docker: removed duplicate `dcrestart` alias
 - CI: use tlrc instead of unavailable tldr in mise install (demo workflow)
 - mdq: fix broken repository link (ysugimoto -> yshavit)
+- CI: remove unneeded Chrome install from demo workflow (fix gpg /dev/tty), install ttyd + ffmpeg
+- CI: demo workflow permissions, branch checkout, GIF assertion and explicit push
+- CI: lint demo.yml with yamllint and actionlint
 - Various typos in README, aliases, comments
 
 ## [0.2.0] - 2025-04-03

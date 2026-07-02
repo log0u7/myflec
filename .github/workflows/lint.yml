@@ -45,6 +45,7 @@ jobs:
         run: |
           yamllint -d '{extends: default, rules: {line-length: disable, document-start: disable, truthy: disable}}' \
             .github/workflows/lint.yml \
+            .github/workflows/demo.yml \
             .gitlab-ci.yml
 
       - name: actionlint
@@ -54,4 +55,4 @@ jobs:
           version="1.7.12"
           curl -fsSL "https://github.com/rhysd/actionlint/releases/download/v${version}/actionlint_${version}_linux_amd64.tar.gz" \
             | tar -xz actionlint
-          ./actionlint -color .github/workflows/lint.yml
+          ./actionlint -color .github/workflows/lint.yml .github/workflows/demo.yml
