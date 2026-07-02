@@ -12,7 +12,7 @@ Set Height 520
 Set TypingSpeed 25ms
 Set Theme "Dracula"
 Set Padding 20
-Set PlaybackSpeed 0.4
+Set PlaybackSpeed 0.2
 
 # Bootstrap (hidden): cd to repo, load MyFlec modules (mise.bash activates mise), preload tldr
 Hide
