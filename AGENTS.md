@@ -52,7 +52,9 @@ image details) come last, not first.
 - The `dot` alias (`_dotfiles.bash`) must be conditional (`[ -d ~/.dotfiles ]`).
 - Native `cat` must not be overridden by bat (use `catp` instead).
 - `GIT_PAGER=delta` (`delta.bash`) must be set only when delta is installed.
-- Hook order (PROMPT_COMMAND): direnv -> fnox -> atuin. Respect load order.
+- Hook order (PROMPT_COMMAND): direnv -> fnox. Atuin uses the preexec
+  mechanism (bash-preexec or ble.sh), not PROMPT_COMMAND directly. Do not
+  conflate the two hook systems.
 - fzf Ctrl-R vs atuin Ctrl-R: atuin takes over if both present (last wins).
 - `assets/` directory and `CHANGELOG.md` are repo-only: whitelisted in
   `.gitignore` but excluded from rsync deployment (`myflec.exclude.lst`).
