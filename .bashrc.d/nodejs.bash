@@ -250,10 +250,6 @@ if command -v npm &> /dev/null; then
     eval "$(npm completion bash 2>/dev/null)"
 fi
 
-# Bash completions for yarn
-if command -v yarn &> /dev/null; then
-    eval "$(yarn completion bash 2>/dev/null)"
-fi
 
 # Display Node.js version on startup (optional, uncomment to enable)
 # function show-node-info() {
