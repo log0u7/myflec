@@ -107,7 +107,7 @@ Module `_dotfiles.bash` provides:
 
 - **Docker-run (zero-install)**: tools usable at first command via Docker.
   Guard: `command -v docker`. Mount `$PWD` for file access. Limited to CWD.
-  Ex: glow, yq, jq, ctop, lazydocker, dive, sherlock.
+  Ex: glow, yq, jq, mdq, ctop, lazydocker, dive, sherlock.
 - **Native (recommended)**: tools installed via mise. Guard: `command -v <tool>`.
   Ex: bat, ripgrep, fd, fzf, zoxide, lazygit, gh, glab, delta, atuin, direnv.
 - **Native (obligatory)**: tools impossible to run in Docker (hooks, shims).
