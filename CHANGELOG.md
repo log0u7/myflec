@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- lazygit: minimal config (`~/.config/lazygit/config.yml`) disabling startup
+  popup, update checks, and random tip; enabling Nerd Font v3 icons
+- demo: symlink `.gitconfig.d` and `.config` to HOME so git aliases and tool
+  configs (starship, lazygit) are active during GIF recording; install
+  bash-preexec so atuin has full keybinding support (no warning, up-arrow works)
 - atuin: source bash-preexec/ble.sh when present for full keybinding support
   (Ctrl-R + up-arrow); fall back to `--disable-up-arrow` when no preexec
   provider is available to avoid the startup warning
