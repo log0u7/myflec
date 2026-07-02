@@ -189,6 +189,3 @@ dotfiles-remotes() {
     git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote -v
 }
 
-# ---- Cleanup -----------------------------------------------------------
-
-unset _DOTFILES_DIR
