@@ -25,7 +25,7 @@ Show
 
 # 1. MYFLEC_DEBUG: module loading
 Type "MYFLEC_DEBUG=1 bash -c '. ~/.bashrc.d/myflec'" Enter
-Sleep 3s
+Sleep 6s
 Ctrl+l
 Sleep 300ms
 
