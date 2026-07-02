@@ -22,6 +22,17 @@ jobs:
         run: |
           ln -s "$GITHUB_WORKSPACE/.bashrc.d" "$HOME/.bashrc.d"
           ln -s "$GITHUB_WORKSPACE/.gitconfig" "$HOME/.gitconfig"
+          ln -s "$GITHUB_WORKSPACE/.gitconfig.d" "$HOME/.gitconfig.d"
+          mkdir -p "$HOME/.config"
+          ln -s "$GITHUB_WORKSPACE/.config/starship.toml" "$HOME/.config/starship.toml"
+          mkdir -p "$HOME/.config/lazygit"
+          ln -s "$GITHUB_WORKSPACE/.config/lazygit/config.yml" "$HOME/.config/lazygit/config.yml"
+
+      - name: Install bash-preexec (atuin up-arrow keybinding)
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh \
+            -o "$HOME/.bash-preexec.sh"
 
       - name: Install mise
         run: |
