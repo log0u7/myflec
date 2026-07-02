@@ -183,7 +183,7 @@ via Docker (zero install, available at first command).
 | Smart directory jump | `z project` | zoxide |
 | Git interactive TUI | `lgit` | lazygit |
 | Read markdown | `md README.md` | glow |
-| Query markdown sections | `mdq '.section' file.md` | mdq |
+| Query markdown sections | `mdq '# section' file.md` | mdq |
 | Process YAML | `yq '.key' file.yaml` | yq |
 | Process JSON | `jq '.key' file.json'` | jq |
 | Container TUI monitor | `ctop` | ctop |
@@ -867,6 +867,7 @@ This gives you all modern CLI tools with one command.
 | [glow](https://github.com/charmbracelet/glow) | Markdown renderer | `charmcli/glow:v2` |
 | [yq](https://github.com/mikefarah/yq) | YAML/JSON processor | `mikefarah/yq:4` |
 | [jq](https://jqlang.github.io/jq/) | JSON processor | `ghcr.io/jqlang/jq:1` |
+| [mdq](https://github.com/yshavit/mdq) | jq for Markdown | `yshavit/mdq:v0.10.0` |
 | ctop | Container top-like monitor | `quay.io/vektorlab/ctop` |
 | lazydocker | Docker TUI | `lazyteam/lazydocker` |
 | dive | Docker layer analysis | `wagoodman/dive` |
@@ -888,7 +889,6 @@ This gives you all modern CLI tools with one command.
 | `powerline-daemon` | Powerline status bar | `powerline.bash` |
 | `golangci-lint` | Go linter | `go.bash` |
 | `pipdeptree` | Python dependency tree | `python.bash` |
-| [mdq](https://github.com/ysugimoto/mdq) | jq for markdown | `mdq.bash` (install: `cargo install mdq`) |
 
 ## Installation
 
