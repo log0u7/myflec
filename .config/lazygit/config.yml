@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+# Lazygit configuration - minimal opinionated defaults for MyFlec.
+# Full reference: https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+
+# Suppress the introductory popup shown on first launch.
+disableStartupPopups: true
+
+# Never check for updates (version managed by mise).
+update:
+  method: never
+
+gui:
+  # Show Nerd Font icons (v3, matches Hack Nerd Font used in the terminal).
+  nerdFontsVersion: "3"
+  # Skip the random tip shown at startup.
+  showRandomTip: false

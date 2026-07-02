@@ -26,3 +26,5 @@
 !.gitlab-ci.yml
 !.config/
 !.config/starship.toml
+!.config/lazygit/
+!.config/lazygit/config.yml
