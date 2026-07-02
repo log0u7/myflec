@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- atuin: source bash-preexec/ble.sh when present for full keybinding support
+  (Ctrl-R + up-arrow); fall back to `--disable-up-arrow` when no preexec
+  provider is available to avoid the startup warning
 - Starship prompt: Gruvbox Rainbow preset (`~/.config/starship.toml`), requires
   a Nerd Font; tracked and deployed with the rest of MyFlec
 - Modern CLI tooling: bat, ripgrep, fd, fzf, zoxide, direnv, atuin, lazygit,
