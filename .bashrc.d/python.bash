@@ -49,6 +49,30 @@ venvdel() {
     rm -rf "$1" && echo "Virtual environment '$1' deleted."
 }
 
+# uv - fast Python package manager (optional, via mise or standalone)
+if command -v uv >/dev/null 2>&1; then
+    alias uvvenv='uv venv'                   # Create virtual environment
+    alias uvpip='uv pip'                     # Pip wrapper
+    alias uvsync='uv sync'                   # Sync from pyproject.toml
+    alias uvrun='uv run'                     # Run in venv
+    alias uvadd='uv add'                     # Add dependency
+    alias uvremove='uv remove'               # Remove dependency
+    alias uvlock='uv lock'                   # Lock dependencies
+fi
+
+# poetry - Python dependency manager (optional, via mise or standalone)
+if command -v poetry >/dev/null 2>&1; then
+    alias po='poetry'                        # Short alias
+    alias poi='poetry install'               # Install dependencies
+    alias poa='poetry add'                   # Add dependency
+    alias por='poetry run'                   # Run in venv
+    alias posh='poetry shell'                # Spawn venv shell
+    alias poe='poetry export -f requirements.txt --output requirements.txt'  # Export to requirements
+    alias porem='poetry remove'              # Remove dependency
+    alias polock='poetry lock'               # Lock dependencies
+    alias pobump='poetry version'            # Bump version
+fi
+
 # Running & debugging
 alias pyrun='python main.py'                   # Run main.py
 alias pydebug='python -m pdb'                  # Start Python debugger
