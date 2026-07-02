@@ -12,6 +12,9 @@ alias dive="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wag
 # Lazydocker
 alias lazydocker="docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /yourpath:/.config/jesseduffield/lazydocker lazyteam/lazydocker"
 
+# Ctop - top-like container monitor
+alias ctop="docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop:latest"
+
 # Docker and Docker Compose aliases
 
 # Docker basics
