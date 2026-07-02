@@ -31,6 +31,15 @@ jobs:
             bat ripgrep fd fzf zoxide lazygit gh glab delta \
             atuin direnv tlrc glow yq jq lsd starship
 
+      - name: Install Nerd Font (Hack)
+        run: |
+          mkdir -p ~/.local/share/fonts
+          curl -fsSLo /tmp/Hack.zip \
+            https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Hack.zip
+          unzip -o /tmp/Hack.zip -d ~/.local/share/fonts
+          fc-cache -f
+          fc-list | grep -i "hack nerd" || { echo "Hack Nerd Font not found"; exit 1; }
+
       - name: Install VHS dependencies
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ttyd ffmpeg
 

@@ -1,22 +1,28 @@
 # MyFlec demo tape
 # Source of the terminal demo GIF.
 # Regenerate: vhs assets/demo.tape
-# Requires: mise, native tools, vhs, chrome, ttyd (see .github/workflows/demo.yml)
+# Requires: mise, native tools, vhs, ttyd, ffmpeg (see .github/workflows/demo.yml)
 Output assets/demo.gif
 
 Set Shell bash
 Set FontSize 14
+Set FontFamily "Hack Nerd Font"
 Set Width 900
 Set Height 520
 Set TypingSpeed 25ms
 Set Theme "Dracula"
 Set Padding 20
 
-# Bootstrap: load MyFlec modules
+# Bootstrap (hidden): set HOME to repo, activate mise, load MyFlec modules, preload tldr
+Hide
+Type "export HOME=$PWD" Enter
+Type `eval "$(mise activate bash)"` Enter
 Type "source .bashrc.d/myflec" Enter
-Sleep 1s
-Ctrl+l
+Type "tldr --update" Enter
+Sleep 4s
+Type "clear" Enter
 Sleep 300ms
+Show
 
 # 1. MYFLEC_DEBUG: module loading
 Type "MYFLEC_DEBUG=1 bash -c '. .bashrc.d/myflec'" Enter
@@ -31,13 +37,13 @@ Ctrl+l
 Sleep 300ms
 
 # 3. bat: syntax highlighting
-Type "batp .gitconfig" Enter
+Type "catp .gitconfig" Enter
 Sleep 2s
 Ctrl+l
 Sleep 300ms
 
 # 4. ripgrep: fast search
-Type """rg "includeIf" .gitconfig""" Enter
+Type `rg "includeIf" .gitconfig` Enter
 Sleep 2s
 Ctrl+l
 Sleep 300ms
@@ -68,11 +74,9 @@ Sleep 1s
 Ctrl+l
 Sleep 300ms
 
-# 8. glow: markdown render
+# 8. glow: markdown render (piped, no pager needed)
 Type "echo '# MyFlec Demo' | glow -" Enter
-Sleep 3s
-Type "q" Enter
-Sleep 1s
+Sleep 2s
 Ctrl+l
 Sleep 300ms
 
