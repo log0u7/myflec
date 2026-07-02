@@ -53,27 +53,41 @@ Sleep 2s
 Ctrl+l
 Sleep 300ms
 
-# 6. git diff with delta (must create a change first)
+# 6. git: create multiple changes (modified + new file), then show with delta
 Type "echo '# demo change for delta' >> README.md" Enter
-Sleep 300ms
-Type "git diff --stat" Enter
+Sleep 200ms
+Type "echo '# demo notes' > demo-notes.md" Enter
+Sleep 200ms
+Type "echo 'alias lt=' >> .bashrc.d/lsd.bash" Enter
+Sleep 200ms
+Type "git st" Enter
 Sleep 1s
+Type "git add README.md" Enter
+Sleep 200ms
+Type "git dc" Enter
+Sleep 2s
 Type "git diff" Enter
 Sleep 3s
-Type "git checkout -- ." Enter
-Sleep 500ms
 Ctrl+l
 Sleep 300ms
 
-# 7. lazygit TUI (glimpse then quit)
+# 7. lazygit: staged + unstaged + untracked all visible
 Type "lgit" Enter
-Sleep 3s
+Sleep 4s
 Type "q" Enter
 Sleep 1s
+
+# 8. cleanup: unstage, restore, remove untracked demo file
+Type "git reset HEAD README.md" Enter
+Sleep 300ms
+Type "git checkout -- ." Enter
+Sleep 300ms
+Type "rm -f demo-notes.md" Enter
+Sleep 300ms
 Ctrl+l
 Sleep 300ms
 
-# 8. glow: markdown render (piped, no pager needed)
+# 9. glow: markdown render (piped, no pager needed)
 Type "echo '# MyFlec Demo' | glow -" Enter
 Sleep 2s
 Ctrl+l
