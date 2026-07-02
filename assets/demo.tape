@@ -13,11 +13,10 @@ Set TypingSpeed 25ms
 Set Theme "Dracula"
 Set Padding 20
 
-# Bootstrap (hidden): set HOME to repo, activate mise, load MyFlec modules, preload tldr
+# Bootstrap (hidden): cd to repo, load MyFlec modules (mise.bash activates mise), preload tldr
 Hide
-Type "export HOME=$PWD" Enter
-Type `eval "$(mise activate bash)"` Enter
-Type "source .bashrc.d/myflec" Enter
+Type "cd $GITHUB_WORKSPACE" Enter
+Type "source ~/.bashrc.d/myflec" Enter
 Type "tldr --update" Enter
 Sleep 4s
 Type "clear" Enter
@@ -25,7 +24,7 @@ Sleep 300ms
 Show
 
 # 1. MYFLEC_DEBUG: module loading
-Type "MYFLEC_DEBUG=1 bash -c '. .bashrc.d/myflec'" Enter
+Type "MYFLEC_DEBUG=1 bash -c '. ~/.bashrc.d/myflec'" Enter
 Sleep 3s
 Ctrl+l
 Sleep 300ms
