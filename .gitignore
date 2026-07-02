@@ -24,3 +24,5 @@
 !.github/workflows/
 !.github/workflows/*.yml
 !.gitlab-ci.yml
+!.config/
+!.config/starship.toml

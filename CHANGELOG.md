@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Starship prompt: Gruvbox Rainbow preset (`~/.config/starship.toml`), requires
+  a Nerd Font; tracked and deployed with the rest of MyFlec
 - Modern CLI tooling: bat, ripgrep, fd, fzf, zoxide, direnv, atuin, lazygit,
   gh, glab, delta, tldr, glow, mdq, yq, jq (guarded by availability)
 - Mise module with activation, short aliases (mi, miu, mii, ...), completion

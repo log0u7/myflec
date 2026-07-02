@@ -359,7 +359,8 @@ A template is at `~/.bashrc.d/hosts/example.bash`.
 
 | Module | What it does | Type | Fallback |
 |---|---|---|---|
-| `myflec` | Loader: sources every `*.bash` module, starts Starship | core | - |
+| `myflec` | Loader: sources every `*.bash` module, starts Starship (Gruvbox Rainbow) | core | - |
+| `.config/starship.toml` | Starship prompt config - Gruvbox Rainbow preset (Nerd Font required) | config | default prompt |
 | `_config.bash` | Locale, history, pager (`most`), GCC colors, TERM | core | - |
 | `_shopts.bash` | Bash `shopt` options (autocd, cdspell, completions, history) | core | - |
 | `_aliases.bash` | Maps helper functions to short aliases (`calc`, `mkcd`, `extract`) | core | - |
