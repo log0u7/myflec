@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- atuin: only initialize in interactive shells (`[[ $- == *i* ]]`) to avoid
+  `bind: warning: line editing not enabled` in non-interactive contexts
 - dotfiles: `_DOTFILES_DIR` was unset at end of module load, breaking the `dot`
   alias and all `dotfiles-*` functions at call time
 - demo: git aliases (`git st`, `git dc`) were unavailable during GIF recording

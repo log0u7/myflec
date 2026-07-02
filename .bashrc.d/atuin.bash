@@ -16,7 +16,7 @@
 # keybinding warning at shell startup). If both atuin and fzf are loaded, atuin
 # takes over Ctrl-R (last-loaded wins).
 
-if command -v atuin >/dev/null 2>&1; then
+if command -v atuin >/dev/null 2>&1 && [[ $- == *i* ]]; then
     # Source bash-preexec if not already loaded and not using ble.sh.
     if [ -z "${__bp_imported:-}" ] && [ -z "${bleopt_prompt_ps1_transient:-}" ]; then
         for _atuin_bp in \
