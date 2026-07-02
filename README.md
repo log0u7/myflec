@@ -211,7 +211,7 @@ outside it. Pipes work (`echo '{"a":1}' | jq '.'`).
 Install everything with one command:
 
 ```bash
-mise use -g bat ripgrep fd fzf zoxide lazygit gh glab delta atuin direnv tldr
+mise use -g bat ripgrep fd fzf zoxide lazygit gh glab delta atuin direnv tlrc
 ```
 
 All native tools are guarded by `command -v <tool>`. If not installed, the
@@ -818,8 +818,8 @@ your distribution or brought in by mise.
 
 ```bash
 mise use -g \
-  bat ripgrep fd fzf zoxide lazygit gh glab delta atuin direnv tldr \
-  uv glow mdq yq jq
+  bat ripgrep fd fzf zoxide lazygit gh glab delta atuin direnv tlrc \
+  uv glow yq jq
 ```
 
 This gives you all modern CLI tools with one command.
@@ -856,8 +856,7 @@ This gives you all modern CLI tools with one command.
 | [glab](https://gitlab.com/gitlab-org/cli) | GitLab CLI | `mise use -g glab` |
 | [atuin](https://atuin.sh/) | Searchable shell history | `mise use -g atuin` |
 | [direnv](https://direnv.net/) | Per-directory env vars | `mise use -g direnv` |
-| [tldr](https://tldr.sh/) | Simplified man pages | `mise use -g tldr` |
-| [mdq](https://github.com/ysugimoto/mdq) | jq for markdown | `mise use -g mdq` |
+| [tldr](https://tldr.sh/) | Simplified man pages | `mise use -g tlrc` (installs `tldr`) |
 | [uv](https://docs.astral.sh/uv/) | Fast Python package manager | `mise use -g uv` |
 | [poetry](https://python-poetry.org/) | Python dependency manager | `mise use -g poetry` |
 
@@ -889,6 +888,7 @@ This gives you all modern CLI tools with one command.
 | `powerline-daemon` | Powerline status bar | `powerline.bash` |
 | `golangci-lint` | Go linter | `go.bash` |
 | `pipdeptree` | Python dependency tree | `python.bash` |
+| [mdq](https://github.com/ysugimoto/mdq) | jq for markdown | `mdq.bash` (install: `cargo install mdq`) |
 
 ## Installation
 

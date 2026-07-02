@@ -24,7 +24,7 @@ jobs:
           "$HOME/.local/bin/mise" trust --all
           "$HOME/.local/bin/mise" use -g \
             bat ripgrep fd fzf zoxide lazygit gh glab delta \
-            atuin direnv tldr glow mdq yq jq lsd starship
+            atuin direnv tlrc glow yq jq lsd starship
 
       - name: Install Chrome
         run: |
