@@ -202,6 +202,10 @@ module is skipped silently. MyFlec works with or without them.
 
 - **fzf vs atuin**: both hook Ctrl-R. Atuin takes over if both are present
   (atuin manages history search, fzf still works for Ctrl-T and Alt-C).
+- **atuin up-arrow under bash**: requires a preexec provider (bash-preexec or
+  ble.sh). Without one, up-arrow is disabled but Ctrl-R works. To enable
+  up-arrow, install bash-preexec:
+  `curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh -o ~/.bash-preexec.sh`
 - **zoxide vs shopt autocd**: coexists. `z` and `zi` add smart jumping on
   top of bash built-in `cd`.
 - **cat not overridden**: `bat` provides `catp` (plain bat) as an alias.
