@@ -22,6 +22,56 @@ dotfiles collection, but suggestions, fixes, and improvements are welcome.
 - Variable names internal to the loader or module setup should be prefixed
   with `_myflec_` to avoid polluting the user environment, and unset when done.
 
+## Commit Conventions
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/).
+
+Format: `type(scope): description`
+
+**Types**: feat, fix, docs, refactor, chore, ci, test, style, perf
+
+**Scopes**: a module name (`ssh`, `go`, `loader`, `vim`, `python`) or a
+cross-cutting concern (`ci`, `readme`, `docs`).
+
+**Rules**:
+- Lowercase, imperative mood, no period at the end.
+- Use the scope to indicate the affected area (omit if too broad).
+
+Examples:
+```
+fix(go): export GOPATH and GOBIN
+refactor(vim): detect vim subshell via VIMRUNTIME instead of ps
+docs(readme): add mermaid load-order graph
+feat: add mise and fnox modules with fallback support
+```
+
+## Branching Model
+
+- `main`: stable branch. Always releasable.
+- Topic branches: `feat/<short-description>`, `fix/<short-description>`,
+  `docs/<short-description>`, `chore/<short-description>`.
+- Open pull requests or merge requests against `main`.
+- Keep commits atomic: one logical fix per commit (squash if needed).
+
+## Versioning and Releases
+
+This project uses [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
+
+- **MAJOR**: breaking changes to module API, load order, or deployment
+  mechanism.
+- **MINOR**: new features, new modules, new tool integrations.
+- **PATCH**: bug fixes, documentation, refactoring without behavior change.
+
+### Release process
+
+1. Ensure `CHANGELOG.md` is up to date: move `[Unreleased]` entries into a
+   new dated section.
+2. Commit the updated changelog.
+3. Tag the release: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
+4. Push to all forges:
+   `git push github --tags && git push gitlab --tags && git push origin --tags`
+5. Update `[Unreleased]` in `CHANGELOG.md` for the next cycle.
+
 ## Testing Your Changes
 
 Before opening a contribution, run a syntax check on every module:
@@ -32,14 +82,20 @@ for f in .bashrc.d/*.bash; do
 done
 ```
 
+Static analysis:
+
+```bash
+shellcheck -x .bashrc.d/*.bash .bashrc.d/myflec
+```
+
 Then verify startup behavior in a clean shell:
 
 ```bash
-# Should list every loaded module
-MYFLEC_DEBUG=1 bash -i
+# Should exit 0 and produce no output
+HOME=$PWD bash -c '. .bashrc.d/myflec'
 
-# Should be completely silent
-bash -i
+# Should list every loaded module
+HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/myflec'
 ```
 
 Make sure that:
@@ -50,12 +106,22 @@ Make sure that:
 - `LANG=C MYFLEC_DEBUG=1 bash -i` shows the ASCII fallback symbol instead
   of the UTF-8 check mark.
 
-## Submitting Changes
+For SSH config changes, verify resolution without connecting:
 
-1. Fork the repository on GitHub, GitLab, or NotABug.
-2. Create a topic branch: `git checkout -b fix/short-description`.
-3. Commit with a clear, imperative message (for example: `Fix lsd alias syntax`).
-4. Open a pull request or merge request against `main`.
+```bash
+ssh -F .ssh/config -G github.com
+ssh -F .ssh/config -G github.com-work
+ssh -F .ssh/config -G gitlab.com
+```
+
+For rsync deployment changes, do a dry run:
+
+```bash
+rsync -avn --exclude-from 'myflec.exclude.lst' ./ /tmp/myflec-dryrun/
+```
+
+Repo-only files (CI workflows, `.tape`, docs, `.gitignore`) must NOT appear
+in the rsync destination.
 
 ## Reporting Issues
 

@@ -1,10 +1,12 @@
 myflec.exclude.lst
 README.md
 CONTRIBUTING.md
+CHANGELOG.md
 LICENSE
 AGENTS.md
 profile
 .git
+assets
 .gitignore
 .github
 .gitlab-ci.yml

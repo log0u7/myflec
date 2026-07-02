@@ -8,6 +8,8 @@
 	path = ~/.gitconfig.d/github
 [includeIf "gitdir:~/projets/gitlab/"]
 	path = ~/.gitconfig.d/gitlab
+[includeIf "gitdir:~/projets/company/"]
+	path = ~/.gitconfig.d/company
 
 [include]
 	path = ~/.gitconfig.d/config

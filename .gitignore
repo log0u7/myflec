@@ -3,8 +3,11 @@
 # Except :
 !README.md
 !CONTRIBUTING.md
+!CHANGELOG.md
 !LICENSE
 !AGENTS.md
+!assets/
+!assets/*
 !myflec.exclude.lst
 !.bash_*
 !.bashrc.d
