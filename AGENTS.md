@@ -54,6 +54,10 @@ image details) come last, not first.
 - `GIT_PAGER=delta` (`delta.bash`) must be set only when delta is installed.
 - Hook order (PROMPT_COMMAND): direnv -> fnox -> atuin. Respect load order.
 - fzf Ctrl-R vs atuin Ctrl-R: atuin takes over if both present (last wins).
+- `assets/` directory and `CHANGELOG.md` are repo-only: whitelisted in
+  `.gitignore` but excluded from rsync deployment (`myflec.exclude.lst`).
+- `assets/demo.tape` is the single source of truth for the terminal demo GIF.
+  Regenerate only via `vhs assets/demo.tape` or the CI workflow.
 
 ## SSH identity model
 
@@ -66,6 +70,26 @@ Key naming convention: `<forge>_<label>_<type>`
 (e.g. `github.com_perso_ed25519`, `gitlab.com_work_ed25519`).
 
 Forges: `github.com`, `gitlab.com`, `notabug.org`.
+
+### Advanced SSH patterns (documented in README)
+
+- **Self-hosted forges**: `Host git.company.work` with `User git`, same as
+  public forges but internal. Git identity via `includeIf` + repo path.
+- **ProxyJump / bastion**: `ProxyJump bastion.company.work` in host stanzas
+  to reach internal services through a single bastion.
+- **Chained ProxyJump**: comma-separated in `ProxyJump` for multi-hop
+  (laptop -> bastion -> swarm-manager -> deploy target).
+- **Connection multiplexing**: `ControlMaster auto` + `ControlPersist 10m`
+  reuses a single TCP connection for fast subsequent SSH sessions.
+- **Wildcard hosts**: `Host *.company.work` applies common settings to a
+  group; specific blocks before wildcards take precedence (first match wins).
+- **Multiple keys (fallback)**: ed25519 primary, rsa4096 secondary listed in
+  order; `IdentitiesOnly yes` prevents extra keys.
+- **SOCKS proxy (dynamic forward)**: `DynamicForward 9050` tunnels all
+  traffic through a bastion; start with `ssh -f -N socks5`.
+- **Port forwarding**: `LocalForward 4443 app.internal.lab:443` exposes a
+  remote port locally; start with `ssh -f -N tunnel-app`. Also supports `-f`,
+  `-N`, `-o ServerAliveInterval=30`, `-o ExitOnForwardFailure=yes`.
 
 ## Dotfiles deployment
 
@@ -120,10 +144,33 @@ rsync -avn --exclude-from 'myflec.exclude.lst' ./ /tmp/myflec-dryrun/
 ## Commits
 
 Conventional Commits, English, one atomic commit per logical fix.
+Format: `type(scope): description`. Types: feat, fix, docs, refactor, chore,
+ci, test, style, perf. Scopes: module name or cross-cutting concern.
 Examples:
 - `fix(go): export GOPATH and GOBIN`
 - `refactor(vim): detect vim subshell via VIMRUNTIME instead of ps`
 - `docs(readme): add mermaid load-order graph`
 - `feat: add mise and fnox modules with fallback support`
+
+## Branching
+
+- `main`: stable branch, always releasable.
+- Topic branches: `feat/`, `fix/`, `docs/`, `chore/`.
+- One atomic commit per logical change.
+
+## Changelog
+
+- Keep `CHANGELOG.md` up to date (Keep a Changelog format).
+- `[Unreleased]` section accumulates changes for the next version.
+- On release: move `[Unreleased]` to a dated section, tag `vX.Y.Z`.
+
+## Demo assets
+
+- `assets/demo.tape` is the VHS source for the terminal demo GIF.
+- Regenerate: `vhs assets/demo.tape` (requires vhs + ttyd + chrome + tools).
+- The GitHub Actions workflow `.github/workflows/demo.yml` automates
+  regeneration on push to `assets/demo.tape` or via `workflow_dispatch`.
+- `assets/demo.gif` and `assets/demo.tape` are repo-only (excluded from rsync
+  deployment via `myflec.exclude.lst`).
 
 A change is done only when the validation commands above pass.
