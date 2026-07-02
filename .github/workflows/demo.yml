@@ -7,11 +7,16 @@ on:
     paths:
       - assets/demo.tape
 
+permissions:
+  contents: write
+
 jobs:
   demo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Install mise
         run: |
@@ -26,20 +31,11 @@ jobs:
             bat ripgrep fd fzf zoxide lazygit gh glab delta \
             atuin direnv tlrc glow yq jq lsd starship
 
-      - name: Install Chrome
-        run: |
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub \
-            | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
-          SRC="deb [arch=amd64"
-          SRC="$SRC signed-by=/usr/share/keyrings/google-chrome.gpg]"
-          SRC="$SRC http://dl.google.com/linux/chrome/deb/ stable main"
-          echo "$SRC" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq google-chrome-stable
+      - name: Install VHS dependencies
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ttyd ffmpeg
 
-      - name: Install ttyd and VHS
+      - name: Install VHS
         run: |
-          sudo apt-get install -y -qq ttyd
           go install github.com/charmbracelet/vhs@latest
           echo "$HOME/go/bin" >> "$GITHUB_PATH"
 
@@ -48,11 +44,13 @@ jobs:
           eval "$("$HOME/.local/bin/mise" activate bash)"
           mkdir -p assets
           vhs assets/demo.tape
+          test -s assets/demo.gif || { echo "demo.gif missing or empty"; exit 1; }
 
       - name: Commit demo GIF
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add assets/demo.gif
-          git diff --cached --quiet || git commit -m "chore: update demo GIF"
-          git push
+          git diff --cached --quiet && { echo "No GIF change"; exit 0; }
+          git commit -m "chore: update demo GIF"
+          git push origin HEAD:main
