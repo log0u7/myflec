@@ -14,9 +14,14 @@ jobs:
   demo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main
+
+      - name: Deploy MyFlec to HOME
+        run: |
+          ln -s "$GITHUB_WORKSPACE/.bashrc.d" "$HOME/.bashrc.d"
+          ln -s "$GITHUB_WORKSPACE/.gitconfig" "$HOME/.gitconfig"
 
       - name: Install mise
         run: |
