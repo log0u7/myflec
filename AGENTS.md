@@ -9,7 +9,6 @@ This file is the durable, agent-facing context.
 - `.bashrc.d/` : bash modules, loaded by `.bashrc.d/myflec` (the loader).
   - Core modules are prefixed with `_` and load first, alphabetically.
   - Tool modules load next, alphabetically.
-  - Repertoire `hosts/` pour les fichiers de configuration par machine.
   - The loader is invoked from `~/.bashrc` via the `profile` snippet.
 - `.bash_aliases` : native Debian/Ubuntu mechanism, sourced by the default
   `.bashrc`. Kept on purpose, separate from `.bashrc.d/`. Do not consolidate.

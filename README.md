@@ -24,7 +24,6 @@ For my Vim setup, see [MyVim](https://github.com/log0u7/myvim).
 - [Modern Tooling](#modern-tooling)
 - [Mise (polyglot tool manager)](#mise-polyglot-tool-manager)
 - [Fnox (secrets management)](#fnox-secrets-management)
-- [Per-Host Configuration](#per-host-configuration)
 - [Changelog](CHANGELOG.md)
 - [Module Reference](#module-reference)
 - [SSH Identity Model](#ssh-identity-model)
@@ -340,25 +339,6 @@ DATABASE_URL = { provider = "aws-sm", ref = "prod/db-url" }
 
 A template file is available at [fnox.toml.example](fnox.toml.example).
 
-## Per-Host Configuration
-
-Each machine (laptop, server, work desktop) can have its own overrides.
-
-Create a file named after the hostname:
-
-```bash
-$EDITOR ~/.bashrc.d/hosts/$(hostname).bash
-```
-
-It is sourced automatically during shell startup, after core modules but
-alongside tool modules. Use it for:
-
-- Machine-specific display/terminal settings
-- Tool overrides (editor choice on a headless server vs desktop)
-- Hardware-specific environment (number of parallel jobs, RAM limits)
-
-A template is at `~/.bashrc.d/hosts/example.bash`.
-
 ## Module Reference
 
 | Module | What it does | Type | Fallback |
@@ -370,7 +350,6 @@ A template is at `~/.bashrc.d/hosts/example.bash`.
 | `_aliases.bash` | Maps helper functions to short aliases (`calc`, `mkcd`, `extract`) | core | - |
 | `_functions.bash` | Core helpers: `setup_tool_path`, `mkcd`, `extract`, `calc`, GPG cipher, host search | core | - |
 | `_dotfiles.bash` | Bare git repo management for `$HOME` (`dotfiles-*` functions + `dot` alias) | core | git |
-| `_host.bash` | Sources `hosts/$(hostname).bash` if present (per-host config) | core | - |
 | `mise.bash` | Mise activation, short aliases (`mi`, `miu`, `mii`, ...), completion | tool | NVM/rustup/GOROOT |
 | `fnox.bash` | Fnox auto-load hook, short aliases (`fn`, `fns`, `fng`, ...), completion | tool | GPG/SSH manual |
 | `bat.bash` | `cat` alternative: `catp` / `catn`, `BAT_THEME` | tool | - |
@@ -416,8 +395,7 @@ flowchart TD
     C -.-> C2["_config.bash"]
     C -.-> C3["_dotfiles.bash"]
     C -.-> C4["_functions.bash"]
-    C -.-> C5["_host.bash"]
-    C -.-> C6["_shopts.bash"]
+    C -.-> C5["_shopts.bash"]
 
     T -.-> T1["30+ tool modules (alphabetical)"]
     T -.-> T2["bat / fd / fzf / glow / lazygit / ..."]
