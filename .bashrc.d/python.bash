@@ -38,7 +38,11 @@ act() {
 }
 
 deact() {
-    deactivate && echo "Virtual environment deactivated."
+    if type deactivate &>/dev/null; then
+        deactivate && echo "Virtual environment deactivated."
+    else
+        echo "No virtual environment active."
+    fi
 }
 
 venvdel() {
