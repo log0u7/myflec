@@ -12,7 +12,11 @@
 !.bash_*
 !.bashrc.d
 !.bashrc.d/*
+# Re-ignore history files (excluded from .bash_* whitelist)
 .bash_history*
+# Runtime artifacts (present when shell is used inside the repo)
+.cache/
+.npm/
 !.gitconfig*
 !.gitconfig.d/*
 !.gitignore
