@@ -39,4 +39,4 @@ fi
 
 # Rustup env
 export CARGO_HOME="$HOME/.cargo"
-export PATH=~/.cargo/bin:$PATH
+export PATH="$CARGO_HOME/bin:$PATH"

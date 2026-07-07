@@ -1,10 +1,12 @@
 # ~/.bash_aliases
 
-# Hexedit
-alias hexedit='hexedit --color'
+if command -v hexedit >/dev/null 2>&1; then
+    alias hexedit='hexedit --color'
+fi
 
-# Diff
-alias diff='diff --color'
+if command -v dig >/dev/null 2>&1; then
+    alias dnsproto='dig +short txt proto.on.quad9.net.'
+fi
 
-# DNS Proto
-alias dnsproto='dig +short txt proto.on.quad9.net.'
+# diff --color is safe on GNU diffutils; fall back silently on other diff
+diff --color /dev/null /dev/null 2>/dev/null && alias diff='diff --color' || true

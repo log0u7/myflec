@@ -6,16 +6,16 @@
 
 [tools]
 # Language runtimes
-node = "20"
-python = "3.12"
-go = "1.22"
-rust = "1.78"
+node = "22"
+python = "3.13"
+go = "1.24"
+rust = "1.85"
 
 # Infrastructure
-terraform = "1.9"
+terraform = "1.10"
 jq = "1.7"
 yq = "4.44"
-just = "1.36"
+just = "1.40"
 
 # Linters / formatters
 # golangci-lint = "1.60"
