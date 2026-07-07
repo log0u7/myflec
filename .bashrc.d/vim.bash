@@ -6,7 +6,9 @@ if [ -x "$(command -v vim)" ]; then
     export EDITOR VISUAL="$EDITOR"
 fi
 
-alias vi="vim"
+if command -v vim >/dev/null 2>&1; then
+    alias vi="vim"
+fi
 
 # :q signature alias.
 # vim and neovim both export $VIMRUNTIME into shells they spawn (:sh, :terminal).
