@@ -15,8 +15,6 @@ to enhance your Linux experience. Everything is optional: tools are guarded
 by availability checks so MyFlec degrades gracefully when a tool is not
 installed.
 
-For my Vim setup, see [MyVim](https://github.com/log0u7/myvim).
-
 ## Table of Contents
 
 - [Quick Start](#quick-start)

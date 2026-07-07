@@ -11,4 +11,5 @@ assets
 .github
 .gitlab-ci.yml
 .shellcheckrc
+.cache
 .npm

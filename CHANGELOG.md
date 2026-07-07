@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Starship prompt: pastel-powerline preset instead of gruvbox-rainbow
+  (`~/.config/starship.toml`)
+- go.bash, rust.bash, nodejs.bash, python.bash, vim.bash: wrap aliases in
+  `command -v` guards for graceful degradation
+- direnv.bash: fix PROMPT_COMMAND hook order documentation (actual order
+  is fnox -> direnv, not the reverse)
+- AGENTS.md: sync hook order documentation with actual behavior
+- nodejs.bash: remove YAGNI functions (node-init, node-audit,
+  node-gitignore, node-scripts, npm-search, npm-info, npm-globals,
+  npm-update-globals, node-tree, node-outdated) to align with single
+  responsibility principle
+- README: remove external MyVim link
+
+### Fixed
+
+- docker.bash: guard all 35+ aliases behind `command -v docker` to avoid
+  errors on systems without Docker
+- docker.bash: rename `sherloc` alias to `sherlock` (typo)
+- `_functions.bash`: quote glob in fSearchHosts and guard against empty
+  `~/.ssh/config.d/` (prevented literal `*` being passed to grep)
+- `_dotfiles.bash`: create intermediate directories during conflict backup
+  so files in subdirectories (e.g. `.config/foo`) are not silently lost
+- python.bash: guard `deactivate` call in `deact` function to avoid
+  `command not found` when no virtual env is active
+- .bash_aliases: guard hexedit and dig aliases behind `command -v`
+
+### Removed
+
+- powerline.bash: remove entirely commented-out dead module
+- `.bashrc.d/hosts/`: remove empty directory left after `_host.bash`
+  cleanup in v0.4.0
+- nodejs.bash: remove commented-out `show-node-info` dead code
+
+### CI
+
+- .gitlab-ci.yml: add demo.yml to yamllint checks to match GitHub
+  Actions workflow
+
+### Style
+
+- lsd.bash: add missing module header and description
+- rust.bash: use `$HOME` instead of `~` for consistency
+- nodejs.bash: convert `function` keyword to POSIX style
+- .gitignore: add explicit ignores for `.cache/` and `.npm/` runtime
+  artifacts with explanatory comments
+- myflec.exclude.lst: add .cache to rsync exclusion
+- mise.toml.example: update version strings to 2026 stable releases
+
 ## [0.4.0] - 2026-07-03
 
 ### Added
