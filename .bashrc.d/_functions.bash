@@ -67,6 +67,11 @@ fCalc()
 # list of hosts
 fSearchHosts()
 {
-    [[ -n "$*" ]] && grep -wi 'host\|hostname' ~/.ssh/config.d/* | grep -v '^\s*\#' | awk '{print $2}' |grep "$*";
+    if [[ -z "$*" ]]; then return 1; fi
+    local f
+    for f in ~/.ssh/config.d/*; do
+        [ -f "$f" ] || continue
+        grep -wi 'host\|hostname' "$f"
+    done | grep -v '^\s*\#' | awk '{print $2}' | grep "$*" || true
 }
 

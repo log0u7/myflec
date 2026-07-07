@@ -108,10 +108,10 @@ dotfiles-restore() {
     if [ $exit_code -ne 0 ]; then
         echo "Some files conflict with existing ones." >&2
         echo "Backing up conflicting files to $tmp_backup/conflicts/" >&2
-        mkdir -p "$tmp_backup/conflicts"
         # Backup conflicting files before force-checkout
         git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" checkout 2>&1 \
             | grep '^\s' | sed 's/^\s*//' | while read -r file; do
+                mkdir -p "$(dirname "$tmp_backup/conflicts/$file")"
                 [ -f "$HOME/$file" ] && cp "$HOME/$file" "$tmp_backup/conflicts/$file"
             done
 
