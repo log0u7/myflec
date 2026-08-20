@@ -1,5 +1,5 @@
 
-# include myflec
-if [ -r ~/.bashrc.d/myflec ]; then
-    . ~/.bashrc.d/myflec
+# include loader
+if [ -r ~/.bashrc.d/loader ]; then
+    . ~/.bashrc.d/loader
 fi

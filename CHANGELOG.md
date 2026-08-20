@@ -7,8 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `_myflec.bash`: self-management command (`myflec status` module list,
+  `myflec reload` hot reload, `myflec reload --full` full loader re-source,
+  `myflec help`) for module status check and reload without a new shell
+
 ### Changed
 
+- Rename loader from `myflec` to `loader` for clarity; update all references
+  (profile snippet, CI workflows, demo tape, README, AGENTS, CONTRIBUTING)
 - Starship prompt: pastel-powerline preset instead of gruvbox-rainbow
   (`~/.config/starship.toml`)
 - go.bash, rust.bash, nodejs.bash, python.bash, vim.bash: wrap aliases in

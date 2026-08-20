@@ -17,7 +17,7 @@ Set PlaybackSpeed 0.8
 # Bootstrap (hidden): cd to repo, load MyFlec modules (mise.bash activates mise), preload tldr
 Hide
 Type "cd $GITHUB_WORKSPACE" Enter
-Type "source ~/.bashrc.d/myflec" Enter
+Type "source ~/.bashrc.d/loader" Enter
 Type "tldr --update" Enter
 Sleep 4s
 Type "clear" Enter
@@ -25,7 +25,7 @@ Sleep 300ms
 Show
 
 # 1. MYFLEC_DEBUG: module loading
-Type "MYFLEC_DEBUG=1 bash -c '. ~/.bashrc.d/myflec'" Enter
+Type "MYFLEC_DEBUG=1 bash -c '. ~/.bashrc.d/loader'" Enter
 Sleep 4s
 Ctrl+l
 Sleep 300ms
