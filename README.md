@@ -26,6 +26,7 @@ installed.
 - [Module Reference](#module-reference)
 - [SSH Identity Model](#ssh-identity-model)
 - [Advanced SSH Patterns](#advanced-ssh-patterns)
+- [Self Management](#self-management)
 - [Debug Mode](#debug-mode)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -341,13 +342,14 @@ A template file is available at [fnox.toml.example](fnox.toml.example).
 
 | Module | What it does | Type | Fallback |
 |---|---|---|---|
-| `myflec` | Loader: sources every `*.bash` module, starts Starship (Gruvbox Rainbow) | core | - |
-| `.config/starship.toml` | Starship prompt config - Gruvbox Rainbow preset (Nerd Font required) | config | default prompt |
+| `loader` | Loader: sources every `*.bash` module, starts Starship (Pastel Powerline) | core | - |
+| `.config/starship.toml` | Starship prompt config - Pastel Powerline preset (Nerd Font required) | config | default prompt |
 | `_config.bash` | Locale, history, pager (`most`), GCC colors, TERM | core | - |
 | `_shopts.bash` | Bash `shopt` options (autocd, cdspell, completions, history) | core | - |
 | `_aliases.bash` | Maps helper functions to short aliases (`calc`, `mkcd`, `extract`) | core | - |
 | `_functions.bash` | Core helpers: `setup_tool_path`, `mkcd`, `extract`, `calc`, GPG cipher, host search | core | - |
 | `_dotfiles.bash` | Bare git repo management for `$HOME` (`dotfiles-*` functions + `dot` alias) | core | git |
+| `_myflec.bash` | Self-management: `myflec status` (module list), `myflec reload` (hot reload) | core | - |
 | `mise.bash` | Mise activation, short aliases (`mi`, `miu`, `mii`, ...), completion | tool | NVM/rustup/GOROOT |
 | `fnox.bash` | Fnox auto-load hook, short aliases (`fn`, `fns`, `fng`, ...), completion | tool | GPG/SSH manual |
 | `bat.bash` | `cat` alternative: `catp` / `catn`, `BAT_THEME` | tool | - |
@@ -378,13 +380,13 @@ A template file is available at [fnox.toml.example](fnox.toml.example).
 
 ### Load Order
 
-The loader (`.bashrc.d/myflec`) is invoked from `~/.bashrc` via the `profile`
+The loader (`.bashrc.d/loader`) is invoked from `~/.bashrc` via the `profile`
 snippet. It sources core modules (prefixed `_`) first, then tool modules, both
 in alphabetical order.
 
 ```mermaid
 flowchart TD
-    P["~/.bashrc (profile snippet)"] --> L[".bashrc.d/myflec (loader)"]
+    P["~/.bashrc (profile snippet)"] --> L[".bashrc.d/loader"]
     L --> C["Core modules: _*.bash (alphabetical)"]
     C --> T["Tool modules: *.bash (alphabetical)"]
     T --> S["starship init (if available)"]
@@ -393,7 +395,8 @@ flowchart TD
     C -.-> C2["_config.bash"]
     C -.-> C3["_dotfiles.bash"]
     C -.-> C4["_functions.bash"]
-    C -.-> C5["_shopts.bash"]
+    C -.-> C5["_myflec.bash"]
+    C -.-> C6["_shopts.bash"]
 
     T -.-> T1["30+ tool modules (alphabetical)"]
     T -.-> T2["bat / fd / fzf / glow / lazygit / ..."]
@@ -752,6 +755,24 @@ Then start with: `ssh -f -N tunnel-app`
 | `-L` | Local forward | Expose a remote port locally |
 | `-R` | Remote forward | Expose a local port on the remote host |
 | `-D` | Dynamic forward | SOCKS5 proxy (see previous section) |
+
+## Self Management
+
+The `myflec` command (from `_myflec.bash`) verifies the module state and
+reloads configuration without opening a new shell:
+
+```bash
+myflec            # show help
+myflec status     # list all modules (core then tool) with a count
+myflec reload     # re-source every module (safe, hooks preserved)
+myflec reload --full  # re-source the full loader (hooks may accumulate)
+```
+
+`myflec status` lists modules in load order and is useful to verify that a
+deployment is complete. `myflec reload` picks up changes made to the module
+files in the current shell; use `myflec reload --full` when the loader itself
+or its hooks changed (note that PROMPT_COMMAND hooks may accumulate, a new
+shell is the cleanest option).
 
 ## Debug Mode
 

@@ -7,3 +7,4 @@ alias extract=fExtract
 alias gpgc=fSimpleGpgFileCipher
 alias gpgu=fSimpleGpgFileUncipher
 alias searchhosts=fSearchHosts
+alias myflec=fMyflec

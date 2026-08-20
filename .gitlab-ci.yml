@@ -11,19 +11,19 @@ shellcheck:
   script:
     - |
       fail=0
-      for f in .bashrc.d/*.bash .bashrc.d/myflec; do
+      for f in .bashrc.d/*.bash .bashrc.d/loader; do
         bash -n "$f" || { echo "Syntax error: $f"; fail=1; }
       done
       exit "$fail"
     - |
       fail=0
-      for f in .bashrc.d/*.bash .bashrc.d/myflec; do
+      for f in .bashrc.d/*.bash .bashrc.d/loader; do
         shellcheck -x -s bash "$f" || fail=1
       done
       exit "$fail"
-    - HOME=$PWD bash -c '. .bashrc.d/myflec'
+    - HOME=$PWD bash -c '. .bashrc.d/loader'
     - |
-      count=$(HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/myflec' 2>&1 \
+      count=$(HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/loader' 2>&1 \
         | grep -c 'configuration loaded' || true)
       echo "Modules loaded: $count"
       [ "$count" -gt 0 ] || { echo "No modules reported"; exit 1; }

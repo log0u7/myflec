@@ -77,7 +77,7 @@ This project uses [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH)
 Before opening a contribution, run a syntax check on every module:
 
 ```bash
-for f in .bashrc.d/*.bash; do
+for f in .bashrc.d/*.bash .bashrc.d/loader; do
     bash -n "$f" || echo "Syntax error: $f"
 done
 ```
@@ -85,17 +85,17 @@ done
 Static analysis:
 
 ```bash
-shellcheck -x .bashrc.d/*.bash .bashrc.d/myflec
+shellcheck -x .bashrc.d/*.bash .bashrc.d/loader
 ```
 
 Then verify startup behavior in a clean shell:
 
 ```bash
 # Should exit 0 and produce no output
-HOME=$PWD bash -c '. .bashrc.d/myflec'
+HOME=$PWD bash -c '. .bashrc.d/loader'
 
 # Should list every loaded module
-HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/myflec'
+HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/loader'
 ```
 
 Make sure that:

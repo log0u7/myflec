@@ -6,9 +6,11 @@ This file is the durable, agent-facing context.
 
 ## Project structure
 
-- `.bashrc.d/` : bash modules, loaded by `.bashrc.d/myflec` (the loader).
+- `.bashrc.d/` : bash modules, loaded by `.bashrc.d/loader` (the loader).
   - Core modules are prefixed with `_` and load first, alphabetically.
   - Tool modules load next, alphabetically.
+  - `_myflec.bash` provides the `myflec` command: `myflec status` (module
+    list) and `myflec reload` (hot reload; `--full` re-sources the loader).
   - The loader is invoked from `~/.bashrc` via the `profile` snippet.
 - `.bash_aliases` : native Debian/Ubuntu mechanism, sourced by the default
   `.bashrc`. Kept on purpose, separate from `.bashrc.d/`. Do not consolidate.
@@ -41,7 +43,9 @@ image details) come last, not first.
 
 ## Do not break
 
-- The loader (`.bashrc.d/myflec`) and its core-then-tools alphabetical ordering.
+- The loader (`.bashrc.d/loader`) and its core-then-tools alphabetical ordering.
+- `myflec reload` re-sources modules only; `myflec reload --full` re-sources
+  the loader (PROMPT_COMMAND hooks may accumulate, a new shell is cleaner).
 - The `.bash_aliases` mechanism (do not fold it into `.bashrc.d/`).
 - Existing per-directory git identity selection (`includeIf`).
 - The host-alias SSH pattern: forge blocks in `.ssh/config` use `User git`
@@ -120,18 +124,18 @@ Run before proposing changes and again after:
 
 ```bash
 # Syntax check every module
-for f in .bashrc.d/*.bash .bashrc.d/myflec; do
+for f in .bashrc.d/*.bash .bashrc.d/loader; do
     bash -n "$f" || echo "SYNTAX: $f"
 done
 
 # Static analysis (follows source via -x, suppression in .shellcheckrc)
-shellcheck -x .bashrc.d/*.bash .bashrc.d/myflec
+shellcheck -x .bashrc.d/*.bash .bashrc.d/loader
 
 # Smoke test (must exit 0)
-HOME=$PWD bash -c '. .bashrc.d/myflec'
+HOME=$PWD bash -c '. .bashrc.d/loader'
 
 # Smoke test with debug (must list all modules)
-HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/myflec'
+HOME=$PWD MYFLEC_DEBUG=1 bash -c '. .bashrc.d/loader'
 
 # SSH: verify resolved config without connecting
 ssh -F .ssh/config -G github.com
