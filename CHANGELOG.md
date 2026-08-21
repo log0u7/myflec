@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.1] - 2026-08-20
+## [0.5.0] - 2026-08-20
 
 ### Added
 
@@ -15,19 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Rename loader from `myflec` to `loader` for clarity; update all references
   (profile snippet, CI workflows, demo tape, README, AGENTS, CONTRIBUTING)
-
-- Starship prompt: pastel-powerline preset instead of gruvbox-rainbow
-  (`~/.config/starship.toml`)
-- go.bash, rust.bash, nodejs.bash, python.bash, vim.bash: wrap aliases in
-  `command -v` guards for graceful degradation
-- direnv.bash: fix PROMPT_COMMAND hook order documentation (actual order
-  is fnox -> direnv, not the reverse)
-- AGENTS.md: sync hook order documentation with actual behavior
-- nodejs.bash: remove YAGNI functions (node-init, node-audit,
-  node-gitignore, node-scripts, npm-search, npm-info, npm-globals,
-  npm-update-globals, node-tree, node-outdated) to align with single
-  responsibility principle
-- README: remove external MyVim link
 
 ### Changed
 
@@ -75,13 +62,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `_myflec.bash`: self-management command (`myflec status` module list,
-  `myflec reload` hot reload, `myflec reload --full` full loader re-source,
-  `myflec help`) for module status check and reload without a new shell
+- (none for this release)
 
 ### Changed
 
 - (none for this release)
+
+## [0.4.1] - 2026-07-07
+
+### Added
+
+- Starship prompt: pastel-powerline preset instead of gruvbox-rainbow
+  (`~/.config/starship.toml`)
+
+### Changed
+
+- go.bash, rust.bash, nodejs.bash, python.bash, vim.bash: wrap aliases in
+  `command -v` guards for graceful degradation
+- direnv.bash: fix PROMPT_COMMAND hook order documentation (actual order
+  is fnox -> direnv, not the reverse)
+- AGENTS.md: sync hook order documentation with actual behavior
+- nodejs.bash: remove YAGNI functions (node-init, node-audit,
+  node-gitignore, node-scripts, npm-search, npm-info, npm-globals,
+  npm-update-globals, node-tree, node-outdated) to align with single
+  responsibility principle
+
+### Fixed
+
+- powerline.bash: remove entirely commented-out dead module
+- `.bashrc.d/hosts/`: remove empty directory left after `_host.bash`
+  cleanup in v0.4.0
+- nodejs.bash: remove commented-out `show-node-info` dead code
+
+### CI
+
+- .gitlab-ci.yml: add demo.yml to yamllint checks to match GitHub
+  Actions workflow
+
+### Style
+
+- lsd.bash: add missing module header and description
+- rust.bash: use `$HOME` instead of `~` for consistency
+- nodejs.bash: convert `function` keyword to POSIX style
+- .gitignore: add explicit ignores for `.cache/` and `.npm/` runtime
+  artifacts with explanatory comments
+- myflec.exclude.lst: add .cache to rsync exclusion
+- mise.toml.example: update version strings to 2026 stable releases
 
 ## [0.4.0] - 2026-07-03
 
@@ -207,6 +233,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git identities and searchhost function
 - Various typos
 
+[0.5.0]: https://github.com/log0u7/myflec/compare/v0.4.1...v0.5.0
+[0.4.1]: https://github.com/log0u7/myflec/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/log0u7/myflec/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/log0u7/myflec/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/log0u7/myflec/compare/v0.1.0...v0.2.0

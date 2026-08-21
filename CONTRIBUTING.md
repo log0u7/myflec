@@ -72,6 +72,11 @@ This project uses [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH)
    `git push github --tags && git push gitlab --tags && git push origin --tags`
 5. Update `[Unreleased]` in `CHANGELOG.md` for the next cycle.
 
+**Important**: The demo workflow (`.github/workflows/demo.yml`) now includes
+branch filtering and concurrency control to prevent race conditions when
+pushing tags and creating the demo GIF simultaneously. All push operations
+are now sequential and protected by workflow-level locks.
+
 ## Testing Your Changes
 
 Before opening a contribution, run a syntax check on every module:

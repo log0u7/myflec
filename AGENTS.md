@@ -168,6 +168,12 @@ Examples:
 - Keep `CHANGELOG.md` up to date (Keep a Changelog format).
 - `[Unreleased]` section accumulates changes for the next version.
 - On release: move `[Unreleased]` to a dated section, tag `vX.Y.Z`.
+- **Critical**: Ensure `CHANGELOG.md` sections are correctly split by version.
+  The `[Unreleased]` section must be emptied, and each version section
+  (`v0.4.1`, `v0.5.0`, etc.) must contain only its own changes.
+- **Validation**: Before any release, run the validation commands and ensure
+  `CHANGELOG.md` is properly formatted with no duplicate or mixed version
+  sections.
 
 ## Demo assets
 
@@ -175,6 +181,9 @@ Examples:
 - Regenerate: `vhs assets/demo.tape` (requires vhs + ttyd + chrome + tools).
 - The GitHub Actions workflow `.github/workflows/demo.yml` automates
   regeneration on push to `assets/demo.tape` or via `workflow_dispatch`.
+- **Race condition fix**: The workflow now includes `branches: [main]`
+  filter and `concurrency` controls to prevent conflicts when pushing
+  tags and creating the demo GIF simultaneously.
 - `assets/demo.gif` and `assets/demo.tape` are repo-only (excluded from rsync
   deployment via `myflec.exclude.lst`).
 
