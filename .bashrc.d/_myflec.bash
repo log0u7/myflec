@@ -101,7 +101,7 @@ _myflec_reload() {
 	done
 
 	# Update tracking with current myflec aliases
-	_MYFLEC_ALIASES=($(alias -p | sed -n "s/^alias \([^=]*\)=.*/\1/p"))
+	mapfile -t _MYFLEC_ALIASES < <(alias -p | sed -n "s/^alias \([^=]*\)=.*/\1/p")
 
 	echo "MyFlec reloaded (modules only, hooks preserved)."
 }

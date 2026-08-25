@@ -36,7 +36,7 @@ unset _myflec_ok _myflec_file
 unset -f _myflec_load
 
 # Capture myflec-defined aliases for smart reload (unset on reload, not user aliases)
-_MYFLEC_ALIASES=($(alias -p | sed -n "s/^alias \([^=]*\)=.*/\1/p"))
+mapfile -t _MYFLEC_ALIASES < <(alias -p | sed -n "s/^alias \([^=]*\)=.*/\1/p")
 
 # Starship
 if command -v starship >/dev/null 2>&1; then
