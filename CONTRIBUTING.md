@@ -128,6 +128,14 @@ rsync -avn --exclude-from 'myflec.exclude.lst' ./ /tmp/myflec-dryrun/
 Repo-only files (CI workflows, `.tape`, docs, `.gitignore`) must NOT appear
 in the rsync destination.
 
+## Applying Changes to a Running Shell
+
+After updating myflec files on disk, use `myflec reload --full` to pick up
+changes to the loader or `_myflec.bash` itself. Plain `myflec reload` only
+re-sources module files (aliases, functions, env vars) and will not see
+changes to the loader or self-management functions. For a clean state, open
+a new shell.
+
 ## Reporting Issues
 
 Open an issue on any of the mirrors and include:
