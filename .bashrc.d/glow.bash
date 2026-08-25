@@ -7,8 +7,8 @@
 # Limitation (docker fallback): only files in the current directory ($PWD) are accessible.
 
 if command -v glow >/dev/null 2>&1; then
-    alias md='glow'
+	alias md='glow'
 elif command -v docker >/dev/null 2>&1; then
-    alias glow='docker run --rm -i -v "$PWD":/work -w /work charmcli/glow:v2'
-    alias md='glow'
+	alias glow='docker run --rm -i -v "$PWD":/work -w /work charmcli/glow:v3'
+	alias md='glow'
 fi

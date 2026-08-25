@@ -7,5 +7,5 @@
 # Supports pipes (echo '...' | jq ...) and files in $PWD.
 
 if ! command -v jq >/dev/null 2>&1 && command -v docker >/dev/null 2>&1; then
-    alias jq='docker run --rm -i -v "$PWD":/work -w /work ghcr.io/jqlang/jq:1'
+	alias jq='docker run --rm -i -v "$PWD":/work -w /work ghcr.io/jqlang/jq:1.7.1'
 fi
