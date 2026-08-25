@@ -21,6 +21,7 @@
 !.gitconfig.d/*
 !.gitignore
 !.shellcheckrc
+!.pre-commit-config.yaml
 !.ssh/
 !.ssh/config*
 !.ssh/config.d/*
