@@ -62,11 +62,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- (none for this release)
+- pre-commit hook with gitleaks for secrets detection
 
 ### Changed
 
-- (none for this release)
+- `_myflec.bash`: `myflec reload` now unsets previously tracked myflec aliases
+  before re-sourcing, so renamed/removed aliases no longer persist in the shell
+- loader: capture myflec-defined aliases in `_MYFLEC_ALIASES` at init for
+  smart reload tracking
+- nodejs.bash: rename `ps` alias to `pss` to avoid shadowing system `ps`
+- glow.bash: pin Docker image to `:v3` (was `:v2`)
+- jq.bash: pin Docker image to `:1.7.1` (was `:1`)
+- docker.bash: pin ctop image to `:0.7.7` (was `:latest`)
+
+### Docs
+
+- README, CONTRIBUTING, _myflec.bash help: clarify that `myflec reload --full`
+  is required after updating loader or _myflec.bash itself
 
 ## [0.4.1] - 2026-07-07
 

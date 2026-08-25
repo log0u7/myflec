@@ -769,9 +769,10 @@ myflec reload --full  # re-source the full loader (hooks may accumulate)
 ```
 
 `myflec status` lists modules in load order and is useful to verify that a
-deployment is complete. `myflec reload` picks up changes made to the module
-files in the current shell; use `myflec reload --full` when the loader itself
-or its hooks changed (note that PROMPT_COMMAND hooks may accumulate, a new
+deployment is complete. `myflec reload` picks up changes made to module files
+(aliases, functions, env vars) in the current shell. Use `myflec reload --full`
+after updating myflec files on disk to also pick up changes to the loader
+itself or `_myflec.bash` (note that PROMPT_COMMAND hooks may accumulate, a new
 shell is the cleanest option).
 
 ## Debug Mode
