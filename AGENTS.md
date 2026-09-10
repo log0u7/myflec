@@ -22,9 +22,8 @@ This file is the durable, agent-facing context.
 
 ## Documentation principle
 
-Sections follow the order: **Purpose** (what it does) -> **Usage** (how to use
-it) -> **Internals** (how it is made). "Internals" (guards, load order, docker
-image details) come last, not first.
+Section order: **Purpose** (what it does) -> **Usage** (how to use it) ->
+**Internals** (guards, load order, docker image details) last, not first.
 
 ## Conventions
 
@@ -35,8 +34,6 @@ image details) come last, not first.
   Apply KISS and YAGNI: one module = one responsibility.
 - No emoji in source files. Never commit secrets, private keys, or real host
   configs; use clearly generic placeholders.
-- No em dash (`-`) in any output, file, or commit message. Use `:`, `,`,
-  parentheses, or a plain hyphen `-` instead.
 - Docker-run modules (zero-install tools): alias with `docker run --rm`,
   guard with `command -v docker`, mount `$PWD:/work -w /work` for file access.
   Pin major version tags when available (e.g. `:4`, `:v2`, `:1`).
@@ -104,18 +101,18 @@ Module `_dotfiles.bash` provides:
 - Functions: `dotfiles-init`, `dotfiles-restore`, `dotfiles-list`,
   `dotfiles-status`, `dotfiles-backup`, `dotfiles-sync`,
   `dotfiles-addbackup`, `dotfiles-removebackup`, `dotfiles-remotes`
-- The dotfiles repo is PRIVATE and DISTINCT from MyFlec (public).
+- Dotfiles repo PRIVATE and DISTINCT from MyFlec (public).
 - Multi-forge push via `git remote set-url --add --push origin <url>`.
 - `.gitignore` whitelist mode (ignore all, allow specific paths).
 
 ## Modern tooling policy
 
-- **Docker-run (zero-install)**: tools usable at first command via Docker.
-  Guard: `command -v docker`. Mount `$PWD` for file access. Limited to CWD.
+- **Docker-run (zero-install)**: usable at first command via Docker. Guard:
+  `command -v docker`. Mount `$PWD` for file access. Limited to CWD.
   Ex: glow, yq, jq, mdq, ctop, lazydocker, dive, sherlock.
-- **Native (recommended)**: tools installed via mise. Guard: `command -v <tool>`.
+- **Native (recommended)**: installed via mise. Guard: `command -v <tool>`.
   Ex: bat, ripgrep, fd, fzf, zoxide, lazygit, gh, glab, delta, atuin, direnv.
-- **Native (obligatory)**: tools impossible to run in Docker (hooks, shims).
+- **Native (obligatory)**: impossible in Docker (hooks, shims).
   Ex: fzf (`eval "$(fzf --bash)"`), zoxide, direnv, atuin.
 
 ## Validation commands
@@ -179,11 +176,9 @@ Examples:
 
 - `assets/demo.tape` is the VHS source for the terminal demo GIF.
 - Regenerate: `vhs assets/demo.tape` (requires vhs + ttyd + chrome + tools).
-- The GitHub Actions workflow `.github/workflows/demo.yml` automates
-  regeneration on push to `assets/demo.tape` or via `workflow_dispatch`.
-- **Race condition fix**: The workflow now includes `branches: [main]`
-  filter and `concurrency` controls to prevent conflicts when pushing
-  tags and creating the demo GIF simultaneously.
+- Workflow `.github/workflows/demo.yml` automates regeneration on push to
+  `assets/demo.tape` or `workflow_dispatch`, with `branches: [main]` filter
+  and `concurrency` controls (prevents tag-push/GIF-creation races).
 - `assets/demo.gif` and `assets/demo.tape` are repo-only (excluded from rsync
   deployment via `myflec.exclude.lst`).
 
