@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-16
+
 ### Added
 
 - `myflec deploy [--yes]`: safe rsync deploy of the repo onto `$HOME`
@@ -23,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   interpreters such as vim (+python3): `_contextvars` not found ->
   asyncio-based plugins (vdebug) crash at startup. Documented in README
   under Mise > Pitfall.
+
+### Removed
+
+- Placeholder `.ssh/config.d/{private,work}` templates from the repository.
+  Live per-context ssh configs are untracked and excluded from deploys.
 
 ### Documentation
 
