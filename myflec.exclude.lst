@@ -13,3 +13,6 @@ assets
 .shellcheckrc
 .cache
 .npm
+.ssh
+.gitconfig
+.gitconfig.d
