@@ -26,11 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   asyncio-based plugins (vdebug) crash at startup. Documented in README
   under Mise > Pitfall.
 
-### Removed
-
-- Placeholder `.ssh/config.d/{private,work}` templates from the repository.
-  Live per-context ssh configs are untracked and excluded from deploys.
-
 ### Documentation
 
 - Deployment safety rules in AGENTS.md and README after the 2026-09-16
