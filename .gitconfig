@@ -10,6 +10,10 @@
 	path = ~/.gitconfig.d/gitlab
 [includeIf "gitdir:~/projets/company/"]
 	path = ~/.gitconfig.d/company
+[includeIf "hasconfig:remote.*.url:git@gitlab.com:your-username/*"]
+	path = ~/.gitconfig.d/gitlab
+[includeIf "hasconfig:remote.*.url:git@github.com:your-username/*"]
+	path = ~/.gitconfig.d/github
 
 [include]
 	path = ~/.gitconfig.d/config

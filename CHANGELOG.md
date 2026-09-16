@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Git identity templates: `hasconfig:remote.*.url` includes for
+  github/gitlab (declared last so the matching forge identity wins on
+  multi-forge mirrors, and independent of symlinked repo paths where
+  `gitdir:` patterns cannot match) and SSH signing blocks
+  (`commit.gpgsign`, `tag.gpgsign`, `gpg.format = ssh`, `user.signingkey`)
+  in the `.gitconfig.d/{github,gitlab}` templates. `GIT-IDENTITY.md`
+  rewritten to match reality: hasconfig scans `remote.*.url` values only
+  (never pushurls, a separate `gitlab` remote is required), the
+  `~/projets/github/logout -> ../logout/` symlink is canonicalized before
+  `gitdir:` matching, and the no-forge fallback keeps the hostname email.
 - `_dotfiles.bash`: `dotfiles-init` now starts the push URL list with the
   primary URL and sets `push.autoSetupRemote` — previously the first
   `set-url --add --push` replaced the implicit fetch-url push, so extra
