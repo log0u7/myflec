@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `myflec deploy [--yes]`: safe rsync deploy of the repo onto `$HOME`
+  (dry run with full output, confirmation, `--backup --backup-dir` under
+  `${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/`, ssh/git
+  post-checks). `myflec backup` and `myflec restore`: thin facades over the
+  dotfiles git toolbox (bare repo `~/.dotfiles`, multi-remote push,
+  submodule-agnostic)
+
 ### Fixed
 
 - python.bash: unset `PYTHONHOME` at shell startup. A foreign `PYTHONHOME`
@@ -14,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   interpreters such as vim (+python3): `_contextvars` not found ->
   asyncio-based plugins (vdebug) crash at startup. Documented in README
   under Mise > Pitfall.
+
+### Documentation
+
+- Deployment safety rules in AGENTS.md and README after the 2026-09-16
+  rsync incident: placeholder identity templates (`.ssh/`, `.gitconfig`,
+  `.gitconfig.d`) are excluded from deploys and never overwrite live
+  credentials.
 
 ## [0.5.0] - 2026-08-20
 

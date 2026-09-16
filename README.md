@@ -136,14 +136,33 @@ accidentally committing sensitive data.
 
 ### Method B: rsync (alternative)
 
-If you do not want to version-control your `$HOME`, use rsync to deploy:
+If you do not want to version-control your `$HOME`, deploy with the safe
+procedure (dry run, confirmation, automatic backup, ssh/git checks):
 
 ```bash
 git clone https://github.com/log0u7/myflec
-rsync -av --exclude-from 'myflec/myflec.exclude.lst' myflec/ ~/
 cat myflec/profile >> ~/.bashrc
 . ~/.bashrc
+cd myflec && myflec deploy
 ```
+
+`myflec deploy` never transfers the identity templates (`.ssh/`,
+`.gitconfig`, `.gitconfig.d`): they stay excluded via `myflec.exclude.lst`.
+
+### Backup and restore
+
+Version your live state with the dotfiles git toolbox (thin `myflec`
+facades over `_dotfiles.bash`):
+
+```bash
+myflec backup --init git@github.com:user/dotfiles.git [extra-push-url ...]
+myflec backup                  # add -u, commit, push to every remote
+myflec restore git@github.com:user/dotfiles.git
+```
+
+- Extra push targets: `dotfiles-addbackup <url>` (multi-forge).
+- Embedded repos (e.g. myflec itself as a submodule) come back after a
+  restore with: `dot submodule update --init`.
 
 ## Modern Tooling
 
