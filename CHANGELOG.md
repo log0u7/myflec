@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `~/projets/github/logout -> ../logout/` symlink is canonicalized before
   `gitdir:` matching, and the no-forge fallback keeps the hostname email.
 - `_dotfiles.bash`: `dotfiles-init` now starts the push URL list with the
-  primary URL and sets `push.autoSetupRemote` — previously the first
+  primary URL and sets `push.autoSetupRemote`: previously the first
   `set-url --add --push` replaced the implicit fetch-url push, so extra
   remotes silently shadowed the primary push target and the first push
   required manual upstream setup.
