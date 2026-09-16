@@ -280,6 +280,28 @@ lint = "golangci-lint run && cargo clippy"
 
 A template file is available at [mise.toml.example](mise.toml.example).
 
+### Pitfall: PYTHONHOME and embedded interpreters
+
+Never export `PYTHONHOME` to a mise (or pyenv) python tree. Programs that
+embed Python, like vim (+python3), link the **system** libpython but then
+load the stdlib from `PYTHONHOME`. Mise builds keep most stdlib C extensions
+static inside their own libpython, so the foreign tree's `lib-dynload` holds
+only a few modules: the embedded interpreter then fails with
+`ModuleNotFoundError: No module named '_contextvars'` (imported by `asyncio`,
+used by plugins such as vdebug) right at startup.
+
+Reproduce:
+
+```bash
+PYTHONHOME=~/.local/share/mise/installs/python/3.12 vim -u NONE \
+    -c 'py3 import asyncio' -c 'qa!'
+```
+
+MyFlec guards against it: `python.bash` unsets `PYTHONHOME` at shell startup.
+For running programs (vim itself), unset it before plugins load:
+`call setenv('PYTHONHOME', v:null)` in `~/.vim/vimrc`. Mise shims and
+virtualenvs never need `PYTHONHOME`.
+
 ## Fnox (secrets management)
 
 [Fnox](https://fnox.jdx.dev/) manages secrets with multiple backends:

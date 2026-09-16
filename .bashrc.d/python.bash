@@ -1,88 +1,97 @@
 # ~/.bashrc.d/python.bash
 # Python and Pip aliases with dynamic virtual environment management
 
+# PYTHONHOME breaks embedded interpreters: vim/neovim link the system
+# libpython but then load the foreign stdlib, whose lib-dynload is
+# incomplete in mise/pyenv builds (asyncio -> _contextvars -> crash).
+# Mise shims and venvs never need it: drop it.
+if [ -n "${PYTHONHOME:-}" ]; then
+	echo "myflec: unsetting PYTHONHOME (breaks embedded python: vim, vdebug)" >&2
+	unset PYTHONHOME
+fi
+
 # Python basics
-alias py='python3'                             # Default to Python 3
-alias py3='python3'                            # Explicit Python 3
-alias ipy='ipython'                            # Launch IPython
-alias pyv='python --version'                   # Show Python version
-alias pywhich='which python'                   # Find Python executable
+alias py='python3'           # Default to Python 3
+alias py3='python3'          # Explicit Python 3
+alias ipy='ipython'          # Launch IPython
+alias pyv='python --version' # Show Python version
+alias pywhich='which python' # Find Python executable
 
 # Pip package management (fallback when mise is not available)
 if ! command -v mise >/dev/null 2>&1; then
-    alias pipi='pip install'                       # Install package
-    alias pips='pip show'                          # Show package details
-    alias pipu='pip uninstall'                     # Uninstall package
-    alias pipl='pip list'                          # List installed packages
-    alias pipup='pip install --upgrade'            # Upgrade package
-    alias pipreq='pip freeze > requirements.txt'   # Generate requirements file
-    alias pipinst='pip install -r requirements.txt' # Install from requirements file
-    alias pipcache='pip cache purge'               # Clear pip cache
+	alias pipi='pip install'                        # Install package
+	alias pips='pip show'                           # Show package details
+	alias pipu='pip uninstall'                      # Uninstall package
+	alias pipl='pip list'                           # List installed packages
+	alias pipup='pip install --upgrade'             # Upgrade package
+	alias pipreq='pip freeze > requirements.txt'    # Generate requirements file
+	alias pipinst='pip install -r requirements.txt' # Install from requirements file
+	alias pipcache='pip cache purge'                # Clear pip cache
 fi
 
 # Virtual environments with argument
 venv() {
-    if [ -z "$1" ]; then
-        echo "Usage: venv <env_name>"
-        return 1
-    fi
-    python -m venv "$1" && echo "Virtual environment '$1' created."
+	if [ -z "$1" ]; then
+		echo "Usage: venv <env_name>"
+		return 1
+	fi
+	python -m venv "$1" && echo "Virtual environment '$1' created."
 }
 
 act() {
-    if [ -z "$1" ]; then
-        echo "Usage: act <env_name>"
-        return 1
-    fi
-    source "$1/bin/activate" && echo "Activated virtual environment '$1'."
+	if [ -z "$1" ]; then
+		echo "Usage: act <env_name>"
+		return 1
+	fi
+	source "$1/bin/activate" && echo "Activated virtual environment '$1'."
 }
 
 deact() {
-    if type deactivate &>/dev/null; then
-        deactivate && echo "Virtual environment deactivated."
-    else
-        echo "No virtual environment active."
-    fi
+	if type deactivate &>/dev/null; then
+		deactivate && echo "Virtual environment deactivated."
+	else
+		echo "No virtual environment active."
+	fi
 }
 
 venvdel() {
-    if [ -z "$1" ]; then
-        echo "Usage: venvdel <env_name>"
-        return 1
-    fi
-    rm -rf "$1" && echo "Virtual environment '$1' deleted."
+	if [ -z "$1" ]; then
+		echo "Usage: venvdel <env_name>"
+		return 1
+	fi
+	rm -rf "$1" && echo "Virtual environment '$1' deleted."
 }
 
 # uv - fast Python package manager (optional, via mise or standalone)
 if command -v uv >/dev/null 2>&1; then
-    alias uvvenv='uv venv'                   # Create virtual environment
-    alias uvpip='uv pip'                     # Pip wrapper
-    alias uvsync='uv sync'                   # Sync from pyproject.toml
-    alias uvrun='uv run'                     # Run in venv
-    alias uvadd='uv add'                     # Add dependency
-    alias uvremove='uv remove'               # Remove dependency
-    alias uvlock='uv lock'                   # Lock dependencies
+	alias uvvenv='uv venv'     # Create virtual environment
+	alias uvpip='uv pip'       # Pip wrapper
+	alias uvsync='uv sync'     # Sync from pyproject.toml
+	alias uvrun='uv run'       # Run in venv
+	alias uvadd='uv add'       # Add dependency
+	alias uvremove='uv remove' # Remove dependency
+	alias uvlock='uv lock'     # Lock dependencies
 fi
 
 # poetry - Python dependency manager (optional, via mise or standalone)
 if command -v poetry >/dev/null 2>&1; then
-    alias po='poetry'                        # Short alias
-    alias poi='poetry install'               # Install dependencies
-    alias poa='poetry add'                   # Add dependency
-    alias por='poetry run'                   # Run in venv
-    alias posh='poetry shell'                # Spawn venv shell
-    alias poe='poetry export -f requirements.txt --output requirements.txt'  # Export to requirements
-    alias porem='poetry remove'              # Remove dependency
-    alias polock='poetry lock'               # Lock dependencies
-    alias pobump='poetry version'            # Bump version
+	alias po='poetry'                                                       # Short alias
+	alias poi='poetry install'                                              # Install dependencies
+	alias poa='poetry add'                                                  # Add dependency
+	alias por='poetry run'                                                  # Run in venv
+	alias posh='poetry shell'                                               # Spawn venv shell
+	alias poe='poetry export -f requirements.txt --output requirements.txt' # Export to requirements
+	alias porem='poetry remove'                                             # Remove dependency
+	alias polock='poetry lock'                                              # Lock dependencies
+	alias pobump='poetry version'                                           # Bump version
 fi
 
 # Running & debugging
-alias pyrun='python main.py'                   # Run main.py
-alias pydebug='python -m pdb'                  # Start Python debugger
-alias pytime='python -m timeit'                # Run time performance tests
+alias pyrun='python main.py'    # Run main.py
+alias pydebug='python -m pdb'   # Start Python debugger
+alias pytime='python -m timeit' # Run time performance tests
 
 # Miscellaneous
-alias pydeps='pipdeptree'                      # Show dependency tree
-alias pyclean="find . -name '*.pyc' -delete"   # Remove Python cache files
-alias pyshell='python -m code'                 # Start interactive Python shell
+alias pydeps='pipdeptree'                    # Show dependency tree
+alias pyclean="find . -name '*.pyc' -delete" # Remove Python cache files
+alias pyshell='python -m code'               # Start interactive Python shell
