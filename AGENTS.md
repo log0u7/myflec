@@ -105,6 +105,26 @@ Module `_dotfiles.bash` provides:
 - Multi-forge push via `git remote set-url --add --push origin <url>`.
 - `.gitignore` whitelist mode (ignore all, allow specific paths).
 
+## Deployment safety
+
+The rsync deploy and the git backup touch LIVE `$HOME` state. Rules for
+agents and humans:
+
+- The procedure is `myflec deploy [--yes]`: dry run against the real target
+  with full unfiltered output, confirmation, `--backup --backup-dir` under
+  `${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/`, then functional
+  checks (`ssh -G` forges resolve an existing IdentityFile, git identity set).
+- Git backups go through `myflec backup [--init <url>...] | [msg]` and
+  `myflec restore <url>` (thin facades over the `_dotfiles.bash` toolbox):
+  bare repo at `~/.dotfiles`, work-tree `$HOME`, push to every configured
+  remote, agnostic to submodules and to single/multiple remotes.
+- Template paths `.ssh/`, `.gitconfig`, `.gitconfig.d` MUST stay in
+  `myflec.exclude.lst` (keep in sync): the repo versions are generic
+  placeholders; deploying them over live credentials breaks SSH and resets
+  git identity. Never remove that exclusion without user confirmation.
+- Manual rsync only with a real-target dry run, full output review and
+  `--backup`. Never filter the transfer output when auditing.
+
 ## Modern tooling policy
 
 - **Docker-run (zero-install)**: usable at first command via Docker. Guard:
@@ -139,7 +159,9 @@ ssh -F .ssh/config -G github.com
 ssh -F .ssh/config -G github.com-work
 ssh -F .ssh/config -G gitlab.com
 
-# rsync deployment dry run (repo-only files must not appear)
+# rsync deployment dry run (repo-only files must not appear).
+# Dummy target: checks exclusion rules only, NOT live parity. For a real
+# deploy use `myflec deploy` (dry run, backup, post-checks).
 rsync -avn --exclude-from 'myflec.exclude.lst' ./ /tmp/myflec-dryrun/
 ```
 
