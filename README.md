@@ -797,6 +797,46 @@ Then start with: `ssh -f -N tunnel-app`
 | `-R` | Remote forward | Expose a local port on the remote host |
 | `-D` | Dynamic forward | SOCKS5 proxy (see previous section) |
 
+### 9. SSH over 443 (port 22 blocked)
+
+#### Purpose
+
+Some networks hard-block outbound port 22 (TCP fail, IPv4 and IPv6), which
+kills `git push` to every public forge. GitHub and GitLab both publish
+official SSH-over-443 endpoints, so the forges are routed through 443 by
+default: it works everywhere and needs no manual switching.
+
+#### Usage
+
+`.ssh/config.d/forges` routes the forges. Verify the resolved config without
+connecting, then test:
+
+```bash
+ssh -G github.com | grep -E 'hostname|port'
+# hostname ssh.github.com
+# port 443
+
+ssh -T git@github.com
+ssh -T git@gitlab.com
+```
+
+#### Internals
+
+- `config.d/*` is included **before** the forge blocks in `~/.ssh/config`;
+  SSH keeps the **first value seen** per option, so the 443 `HostName`/`Port`
+  win while `User git` and `IdentityFile` still come from the main config.
+- Endpoints and verified host fingerprints (checked against `known_hosts`
+  before install):
+
+  | Host | Endpoint | ED25519 fingerprint |
+  |---|---|---|
+  | github.com | `ssh.github.com:443` | `SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU` |
+  | gitlab.com | `altssh.gitlab.com:443` | `SHA256:eUXGGm1YGsMAS7vkcx6JOJdOGHPem5gQp4taiCfCLB8` |
+
+- `notabug.org` has no SSH-over-443 (443 is its web server only): it stays
+  on port 22 and is reachable only from networks where port 22 passes. An
+  HTTPS + Gitea token is the candidate fallback if needed.
+
 ## Self Management
 
 The `myflec` command (from `_myflec.bash`) verifies the module state and

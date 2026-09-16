@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- SSH over 443 as the main route for public forges: `.ssh/config.d/forges`
+  routes `github.com` -> `ssh.github.com:443` and `gitlab.com` ->
+  `altssh.gitlab.com:443` (official endpoints, host fingerprints verified
+  against `known_hosts`). First-match override of the forge blocks in
+  `.ssh/config` (comment added there); notabug.org stays on port 22 (no 443
+  endpoint). Documented in README Advanced SSH Patterns #9 and AGENTS.md
+
 ### Fixed
 
 - `_dotfiles.bash`: `dotfiles-init` now starts the push URL list with the

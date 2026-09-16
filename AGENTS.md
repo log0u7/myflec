@@ -92,6 +92,9 @@ Forges: `github.com`, `gitlab.com`, `notabug.org`.
 - **Port forwarding**: `LocalForward 4443 app.internal.lab:443` exposes a
   remote port locally; start with `ssh -f -N tunnel-app`. Also supports `-f`,
   `-N`, `-o ServerAliveInterval=30`, `-o ExitOnForwardFailure=yes`.
+- **SSH over 443**: `config.d/forges` routes github.com/gitlab.com through
+  the official 443 endpoints (port 22 blocked on some networks); first-match
+  wins, so it overrides `HostName`/`Port` of the `.ssh/config` forge blocks.
 
 ## Dotfiles deployment
 
