@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   against `known_hosts`). First-match override of the forge blocks in
   `.ssh/config` (comment added there); notabug.org stays on port 22 (no 443
   endpoint). Documented in README Advanced SSH Patterns #9 and AGENTS.md
+- `.bashrc.d/opencode.bash`: opencode agent module exporting plugin env
+  defaults (`WORKFLOW_GUARD_REQUIRE_REVIEW` for workflow-guard,
+  `OPENCODE_WORKTREE_GUARD_MAIN_BRANCHES` for worktree-guard), guarded by
+  `command -v opencode`
 
 ### Fixed
 
@@ -44,6 +48,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   post-checks). `myflec backup` and `myflec restore`: thin facades over the
   dotfiles git toolbox (bare repo `~/.dotfiles`, multi-remote push,
   submodule-agnostic)
+- pre-commit hook with gitleaks for secrets detection
+
+### Changed
+
+- `_myflec.bash`: `myflec reload` now unsets previously tracked myflec aliases
+  before re-sourcing, so renamed/removed aliases no longer persist in the shell
+- loader: capture myflec-defined aliases in `_MYFLEC_ALIASES` at init for
+  smart reload tracking
+- nodejs.bash: rename `ps` alias to `pss` to avoid shadowing system `ps`
+- glow.bash: pin Docker image to `:v3` (was `:v2`)
+- jq.bash: pin Docker image to `:1.7.1` (was `:1`)
+- docker.bash: pin ctop image to `:0.7.7` (was `:latest`)
 
 ### Fixed
 
@@ -59,6 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   rsync incident: placeholder identity templates (`.ssh/`, `.gitconfig`,
   `.gitconfig.d`) are excluded from deploys and never overwrite live
   credentials.
+- README, CONTRIBUTING, _myflec.bash help: clarify that `myflec reload --full`
+  is required after updating loader or _myflec.bash itself
 
 ## [0.5.0] - 2026-08-20
 
@@ -112,28 +130,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   artifacts with explanatory comments
 - myflec.exclude.lst: add .cache to rsync exclusion
 - mise.toml.example: update version strings to 2026 stable releases
-
-## [Unreleased]
-
-### Added
-
-- pre-commit hook with gitleaks for secrets detection
-
-### Changed
-
-- `_myflec.bash`: `myflec reload` now unsets previously tracked myflec aliases
-  before re-sourcing, so renamed/removed aliases no longer persist in the shell
-- loader: capture myflec-defined aliases in `_MYFLEC_ALIASES` at init for
-  smart reload tracking
-- nodejs.bash: rename `ps` alias to `pss` to avoid shadowing system `ps`
-- glow.bash: pin Docker image to `:v3` (was `:v2`)
-- jq.bash: pin Docker image to `:1.7.1` (was `:1`)
-- docker.bash: pin ctop image to `:0.7.7` (was `:latest`)
-
-### Docs
-
-- README, CONTRIBUTING, _myflec.bash help: clarify that `myflec reload --full`
-  is required after updating loader or _myflec.bash itself
 
 ## [0.4.1] - 2026-07-07
 
