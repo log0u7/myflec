@@ -413,6 +413,7 @@ A template file is available at [fnox.toml.example](fnox.toml.example).
 | `go.bash` | Go aliases + project helpers (GOROOT/GOPATH fallback when mise absent) | tool | GOROOT |
 | `rust.bash` | Rust/Cargo aliases (`ca` not `c`), rustup fallback when mise absent | tool | rustup |
 | `nodejs.bash` | Node.js aliases (npm/yarn/pnpm), NVM fallback when mise absent | tool | NVM |
+| `opencode.bash` | opencode AI agent env defaults (workflow-guard, worktree-guard plugins) | tool | - |
 | `ssh.bash` | SSH key generation (`sshkg`, `sshadd`), completion | tool | - |
 | `vim.bash` | Default editor (`vim`), `:q` detection via `$VIMRUNTIME` | tool | - |
 | `lsd.bash` | `ls` replacement via lsd (`ls` / `lt`) | tool | - |
@@ -954,6 +955,7 @@ This gives you all modern CLI tools with one command.
 | `powerline-daemon` | Powerline status bar | `powerline.bash` |
 | `golangci-lint` | Go linter | `go.bash` |
 | `pipdeptree` | Python dependency tree | `python.bash` |
+| `opencode` | AI coding agent (env defaults for guard plugins) | `opencode.bash` |
 
 ## Installation
 

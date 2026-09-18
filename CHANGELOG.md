@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   against `known_hosts`). First-match override of the forge blocks in
   `.ssh/config` (comment added there); notabug.org stays on port 22 (no 443
   endpoint). Documented in README Advanced SSH Patterns #9 and AGENTS.md
+- `.bashrc.d/opencode.bash`: opencode agent module exporting plugin env
+  defaults (`WORKFLOW_GUARD_REQUIRE_REVIEW` for workflow-guard,
+  `OPENCODE_WORKTREE_GUARD_MAIN_BRANCHES` for worktree-guard), guarded by
+  `command -v opencode`
 
 ### Fixed
 
