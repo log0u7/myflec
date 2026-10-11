@@ -37,6 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `set-url --add --push` replaced the implicit fetch-url push, so extra
   remotes silently shadowed the primary push target and the first push
   required manual upstream setup.
+- `.config/starship.toml`: synced the repo copy with the live version it
+  had drifted from: added python, kubernetes, cmd_duration and a custom
+  battery module, right-aligned fill + time segment, two-line prompt with
+  `$character`, dark foreground (`#1D2021`) on language modules, and time
+  format `%a %d/%m %R`.
 
 ## [0.6.0] - 2026-09-16
 

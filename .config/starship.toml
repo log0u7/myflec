@@ -12,6 +12,10 @@ $directory\
 [](fg:#DA627D bg:#FCA17D)\
 $git_branch\
 $git_status\
+$python\
+$docker_context\
+$kubernetes\
+$cmd_duration\
 [](fg:#FCA17D bg:#86BBD8)\
 $c\
 $elixir\
@@ -25,11 +29,14 @@ $nodejs\
 $nim\
 $rust\
 $scala\
-[](fg:#86BBD8 bg:#06969A)\
-$docker_context\
-[](fg:#06969A bg:#33658A)\
+[](fg:#86BBD8)\
+$fill\
+[](fg:#33658A)\
+$custom\
 $time\
-[ ](fg:#33658A)\
+[](fg:#33658A)\
+$line_break\
+$character\
 """
 
 # Disable the blank line at the start of the prompt
@@ -72,79 +79,107 @@ truncate_to_repo = false
 
 [c]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [docker_context]
 symbol = " "
-style = "bg:#06969A"
-format = '[ $symbol $context ]($style) $path'
+style = "fg:#06969A"
+format = '[ $symbol $context ]($style)'
+disabled = false
 
 [elixir]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [elm]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [git_branch]
 symbol = ""
-style = "bg:#FCA17D"
+style = "fg:#1D2021 bg:#FCA17D"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "bg:#FCA17D"
+style = "fg:#1D2021 bg:#FCA17D"
 format = '[$all_status$ahead_behind ]($style)'
 
 [golang]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [gradle]
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [haskell]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [java]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [julia]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [nodejs]
 symbol = ""
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [nim]
 symbol = "󰆥 "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [rust]
 symbol = ""
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [scala]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#1D2021 bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
 [time]
 disabled = false
-time_format = "%R" # Hour:Minute Format
+time_format = "%a %d/%m %R" # Date + Hour:Minute
 style = "bg:#33658A"
-format = '[ ♥ $time ]($style)'
+format = '[ $time ]($style)'
+
+[fill]
+symbol = " "
+
+# Modules devops : texte colore sans fond (disparaissent sans trace)
+[python]
+symbol = " "
+style = "fg:#FCA17D"
+format = '[ $symbol $version( \($virtualenv\)) ]($style)'
+
+[kubernetes]
+style = "fg:#06969A"
+format = '[ $symbol $context ]($style)'
+disabled = false
+
+[cmd_duration]
+min_time = 2000
+style = "fg:#06969A"
+format = '[ $duration ]($style)'
+
+# Batterie : uniquement en decharge (quirk 1.16 : `when` explicite obligatoire)
+[custom.battery]
+command = 'printf "🔋 %s%%" "$(cat /sys/class/power_supply/BAT0/capacity)"'
+when = '[ "$(cat /sys/class/power_supply/BAT0/status)" = "Discharging" ]'
+style = "fg:#06969A"
+format = '[ $output ]($style)'
+disabled = false
