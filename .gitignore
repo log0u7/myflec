@@ -34,3 +34,6 @@
 !.config/starship.toml
 !.config/lazygit/
 !.config/lazygit/config.yml
+!SECURITY.md
+!.github/
+!.github/**
