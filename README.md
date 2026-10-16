@@ -33,17 +33,29 @@ Everything is driven by one command: `myflec`.
 ## Install
 
 ```bash
-git clone https://github.com/log0u7/myflec ~/myflec
-bash -c '. ~/myflec/.bashrc.d/_myflec.bash && fMyflec deploy -C ~/myflec'
-cat ~/myflec/profile >> ~/.bashrc
+curl -fsSL https://raw.githubusercontent.com/log0u7/myflec/main/install.sh | bash
 exec bash
 ```
 
-The second line runs `myflec deploy` before MyFlec is installed. It deploys
-the committed state of the clone (untracked files never reach `$HOME`),
+Prefer reading a script before running it:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/log0u7/myflec/main/install.sh
+less install.sh
+bash install.sh
+```
+
+The installer needs `git`, `rsync` and `tar`. It runs `myflec deploy`, which
 shows a dry run, asks for confirmation, backs up every overwritten file under
-`~/.local/state/myflec-backup/<date>/`, then checks that SSH keys and the git
-identity are in place.
+`~/.local/state/myflec-backup/<date>/` and checks the SSH and git identity
+setup, then it hooks the loader into `~/.bashrc` once.
+
+From a clone instead (to hack on MyFlec):
+
+```bash
+git clone https://github.com/log0u7/myflec ~/myflec
+bash ~/myflec/install.sh -C ~/myflec
+```
 
 Identity templates (`.ssh/`, `.gitconfig`, `.gitconfig.d`) are never
 deployed: they are generic placeholders, see
@@ -52,11 +64,13 @@ deployed: they are generic placeholders, see
 ## Update
 
 ```bash
-myflec update -C ~/myflec       # or set MYFLEC_REPO=~/myflec once
+myflec update
 exec bash
 ```
 
-`update` pulls the repo, then updates `~/.bashrc.d` only, never your
+`update` fetches the latest MyFlec online (GitHub, then GitLab and NotABug
+if unreachable; `MYFLEC_URL` to pick another), shows what changed since your
+version and what it will do, then updates `~/.bashrc.d` only, never your
 configuration files (`.gitconfig`, `.ssh/`, prompt, aliases):
 
 - a module you never changed is updated, or removed if MyFlec dropped it;
@@ -71,8 +85,9 @@ If your [backup](#backup-and-restore) tracks `~/.bashrc.d`, `update` first
 refuses to run while it holds unsaved changes of yours, and reminds you to
 run `myflec backup` afterwards.
 
-On an install older than `update`, run it once from the repo:
-`. ~/myflec/.bashrc.d/_myflec.bash && myflec update -C ~/myflec`.
+To update from a local clone instead (pulled first), use
+`myflec update -C ~/myflec` or set `MYFLEC_REPO=~/myflec`. The online copy
+lives in `~/.cache/myflec/repo` and can be deleted at any time.
 
 ## The myflec command
 
@@ -80,8 +95,8 @@ On an install older than `update`, run it once from the repo:
 |---|---|
 | `myflec status` | List loaded modules (core then tool) |
 | `myflec reload [--full]` | Re-source modules in the current shell (`--full`: the whole loader) |
-| `myflec deploy [-C repo] [--yes]` | First install of the repo to `$HOME` (dry run, confirm, backup, checks) |
-| `myflec update [-C repo] [--yes]` | Pull and update `~/.bashrc.d`, keeping your changes |
+| `myflec deploy [-C repo] [--yes]` | Install everything into `$HOME` (dry run, confirm, backup, checks) |
+| `myflec update [-C repo] [--yes]` | Update `~/.bashrc.d`, keeping your changes |
 | `myflec init <url> [<url>...]` | Create the backup repo, extra URLs become push targets |
 | `myflec add <path>...` | Start tracking files in the backup |
 | `myflec rm <path>...` | Stop tracking files (they stay on disk) |

@@ -6,12 +6,17 @@ LICENSE
 AGENTS.md
 GIT-IDENTITY.md
 SSH.md
+SECURITY.md
+mise.toml.example
+fnox.toml.example
 profile
+install.sh
 .git
 assets
 .gitignore
 .github
 .gitlab-ci.yml
+.pre-commit-config.yaml
 .shellcheckrc
 .cache
 .npm

@@ -9,8 +9,9 @@
 #   myflec                          -> show help
 #   myflec status                   -> list all modules (core then tool) with a count
 #   myflec reload [--full]          -> re-source modules (--full: the whole loader)
-#   myflec deploy [-C repo] [--yes] -> safe rsync deploy (dry run, confirm, backup, checks)
-#   myflec update [-C repo] [--yes] -> pull, then update ~/.bashrc.d keeping local changes
+#   myflec deploy [-C repo] [--yes] -> install into $HOME (dry run, confirm, backup, checks)
+#   myflec update [-C repo] [--yes] -> update ~/.bashrc.d, keeping local changes
+#   (deploy/update fetch MyFlec online by default; -C or MYFLEC_REPO: local clone)
 #   myflec init <url> [<url>...]    -> create the backup repo (first URL = origin)
 #   myflec add <path>...            -> start tracking files in the backup
 #   myflec rm <path>...             -> stop tracking files (kept on disk)
@@ -27,7 +28,8 @@
 # Internals:
 #   Core module (_*.bash), loads after _functions.bash, before _shopts.bash.
 #   The alias myflec=fMyflec lives in _aliases.bash and resolves at call time.
-#   deploy uses the repo myflec.exclude.lst rules. The backup commands delegate
+#   deploy uses the repo myflec.exclude.lst rules; deploy and update read a
+#   git repo: the online cache ~/.cache/myflec/repo or a local clone. The backup commands delegate
 #   to the _dotfiles.bash toolbox, whose dotfiles-* functions stay available
 #   for compatibility. 'myflec backup --init' is kept as an alias of 'init'.
 
@@ -110,13 +112,13 @@ Modules:
   status                  List all loaded modules
   reload [--full]         Re-source modules (--full: the whole loader)
 
-Install and update (repo -> $HOME):
+Install and update (MyFlec -> $HOME, online by default):
   deploy [-C repo] [--yes]
-                          First install of the committed state (HEAD): dry
-                          run, confirm, backup, checks
+                          Install everything: dry run, confirm, backup, checks
   update [-C repo] [--yes]
-                          Pull the repo, update ~/.bashrc.d only; files you
-                          changed are kept (new version: <file>.myflec-new)
+                          Update ~/.bashrc.d only; files you changed are kept
+                          (new version: <file>.myflec-new)
+                          -C <clone> or MYFLEC_REPO: use a local clone
 
 Backup ($HOME <-> git, bare repo at ~/.dotfiles):
   init <url> [<url>...]   Create the backup repo (extra URLs = push targets)
@@ -203,14 +205,20 @@ _myflec_reload_full() {
 	echo "For a clean state, open a new shell."
 }
 
-# ---- deploy -------------------------------------------------------------
+# ---- source: online cache or local clone ---------------------------------
+# deploy and update read MyFlec from a git repository: by default an online
+# copy kept in ${XDG_CACHE_HOME:-~/.cache}/myflec/repo (bare, without file
+# contents until needed), fetched from MYFLEC_URL or the public mirrors in
+# turn; with -C <clone> or MYFLEC_REPO, from a local clone instead.
 
-# Parse "[-C repo] [--yes]" for deploy/update and resolve the repo root.
-# Sets _repo and _assume_yes in the caller's scope.
+_MYFLEC_MIRRORS="https://github.com/log0u7/myflec.git https://gitlab.com/log0u7/myflec.git https://notabug.org/log0u7/myflec.git"
+
+# Parse "[-C repo] [--yes]" for deploy/update. Sets _repo (empty: online),
+# _local (1 for a local clone) and _assume_yes in the caller's scope.
 _myflec_repo_args() {
 	local _cmd="$1"
 	shift
-	_repo="" _assume_yes=0
+	_repo="" _local=0 _assume_yes=0
 	while [ $# -gt 0 ]; do
 		case "$1" in
 		-C)
@@ -232,44 +240,87 @@ _myflec_repo_args() {
 		shift
 	done
 
-	_repo="${_repo:-${MYFLEC_REPO:-$PWD}}"
+	_repo="${_repo:-${MYFLEC_REPO:-}}"
+	[ -z "$_repo" ] && return 0
 	_repo="${_repo%/}"
+	_local=1
 	if [ ! -f "$_repo/myflec.exclude.lst" ]; then
 		echo "myflec $_cmd: no myflec.exclude.lst in '$_repo'" >&2
-		echo "Run from the myflec repo root, pass -C <repo-root> or set MYFLEC_REPO." >&2
+		echo "Pass -C <repo-root> or set MYFLEC_REPO to a myflec clone." >&2
 		return 1
 	fi
 }
 
+# Online mode: create or refresh the cache from the first reachable mirror,
+# then point _repo at it.
+_myflec_fetch() {
+	local _cache="${XDG_CACHE_HOME:-$HOME/.cache}/myflec/repo" _url
+	for _url in ${MYFLEC_URL:-$_MYFLEC_MIRRORS}; do
+		echo "Fetching MyFlec from $_url ..."
+		if [ -d "$_cache" ]; then
+			git -C "$_cache" remote set-url origin "$_url" &&
+				git -C "$_cache" fetch -q origin "+refs/heads/main:refs/heads/main" &&
+				_repo="$_cache" && return 0
+		else
+			mkdir -p "${_cache%/*}" &&
+				git clone -q --bare --filter=blob:none "$_url" "$_cache" &&
+				_repo="$_cache" && return 0
+			rm -rf "$_cache"
+		fi
+	done
+	echo "myflec: no mirror reachable (set MYFLEC_URL, or use -C <clone>)." >&2
+	return 1
+}
+
 # Ask before a change unless --yes was given: _myflec_confirm <yes> <question>
+# Reads the terminal, so it also works under "curl ... | bash".
 _myflec_confirm() {
 	[ "$1" -eq 1 ] && return 0
-	local _answer
+	local _answer=""
 	printf "%s [y/N] " "$2"
-	read -r _answer
+	if [ ! -t 0 ] && { exec 3</dev/tty; } 2>/dev/null; then
+		read -r _answer <&3
+		exec 3<&-
+	else
+		read -r _answer
+	fi
 	case "$_answer" in
 	y | yes) return 0 ;;
 	*) return 1 ;;
 	esac
 }
 
+# Record the commit now installed: the base of the next update
+_myflec_record() {
+	local _state="${XDG_STATE_HOME:-$HOME/.local/state}/myflec/deployed"
+	mkdir -p "${_state%/*}" && git -C "$_repo" rev-parse HEAD >"$_state"
+}
+
+# ---- deploy ---------------------------------------------------------------
+# Install the whole repo (minus myflec.exclude.lst) into $HOME: dry run,
+# confirmation, backup of every overwritten file, then informative checks.
+
 _myflec_deploy() {
-	local _repo _assume_yes
+	local _repo _local _assume_yes
 	_myflec_repo_args deploy "$@" || return 1
+	if [ "$_local" -eq 0 ]; then
+		_myflec_fetch || return 1
+	fi
 
 	local _stamp _backup_dir
 	_stamp="$(date +%F-%H%M%S)"
 	_backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/$_stamp"
-	local -a _flags=(-a --exclude-from "$_repo/myflec.exclude.lst")
-	local _stats _count _src="$_repo"
+	local _stats _count _src="$_repo" _git=0
 
-	# Deploy the committed state only: stray files of the working tree
+	# Deploy the committed state only: stray files of a working tree
 	# (test artefacts, local tool state) must never reach $HOME.
-	if git -C "$_repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+	if git -C "$_repo" rev-parse --git-dir >/dev/null 2>&1; then
+		_git=1
 		_src="$(mktemp -d)" || return 1
 		git -C "$_repo" archive HEAD | tar -x -C "$_src" || return 1
-		echo "Source: $_repo at $(git -C "$_repo" log --format='%h %s' -1)"
+		echo "Source: $(git -C "$_repo" log --format='%h (%cs) %s' -1)"
 	fi
+	local -a _flags=(-a --exclude-from "$_src/myflec.exclude.lst")
 
 	echo "Dry run (real target: \$HOME):"
 	_stats="$(rsync -avn --stats "${_flags[@]}" "$_src/" "$HOME/")"
@@ -279,32 +330,34 @@ _myflec_deploy() {
 
 	if [ "$_count" -eq 0 ]; then
 		echo "myflec deploy: nothing to deploy."
-		[ "$_src" != "$_repo" ] && rm -rf "$_src"
+		[ "$_git" -eq 1 ] && rm -rf "$_src" && _myflec_record
 		_myflec_deploy_checks
-		return $?
+		return 0
 	fi
 
 	if ! _myflec_confirm "$_assume_yes" "Deploy the $_count file(s) above to \$HOME (backup: $_backup_dir)?"; then
 		echo "myflec deploy: aborted."
-		[ "$_src" != "$_repo" ] && rm -rf "$_src"
+		[ "$_git" -eq 1 ] && rm -rf "$_src"
 		return 1
 	fi
 
 	rsync "${_flags[@]}" --backup --backup-dir="$_backup_dir" "$_src/" "$HOME/"
 	local _rc=$?
-	[ "$_src" != "$_repo" ] && rm -rf "$_src"
+	[ "$_git" -eq 1 ] && rm -rf "$_src"
 	if [ "$_rc" -ne 0 ]; then
 		echo "myflec deploy: rsync failed (exit $_rc)" >&2
 		return "$_rc"
 	fi
+	[ "$_git" -eq 1 ] && _myflec_record
 	echo "myflec deploy: done. Overwritten files backed up in: $_backup_dir"
 
 	_myflec_deploy_checks
-	return $?
+	return 0
 }
 
+# Informative checks of the identity setup (never fail the deploy)
 _myflec_deploy_checks() {
-	local _ok=0 _forge _ident _ident_ok
+	local _forge _ident _ident_ok
 	for _forge in github.com gitlab.com notabug.org; do
 		_ident_ok=0
 		# ssh -G lists several identityfile entries (defaults first, paths
@@ -316,18 +369,15 @@ _myflec_deploy_checks() {
 		if [ "$_ident_ok" -eq 1 ]; then
 			echo "PASS: ssh -G $_forge"
 		else
-			echo "FAIL: ssh -G $_forge (no existing IdentityFile)"
-			_ok=1
+			echo "WARN: ssh -G $_forge (no existing IdentityFile)"
 		fi
 	done
 	if [ -n "$(git config --global user.name 2>/dev/null)" ] &&
 		[ -n "$(git config --global user.email 2>/dev/null)" ]; then
 		echo "PASS: git identity $(git config --global user.name) <$(git config --global user.email)>"
 	else
-		echo "FAIL: git identity missing (user.name/user.email)"
-		_ok=1
+		echo "WARN: git identity missing (user.name/user.email)"
 	fi
-	return "$_ok"
 }
 
 # ---- update ---------------------------------------------------------------
@@ -372,11 +422,6 @@ _myflec_update_list() {
 	echo ""
 }
 
-# Record the repo HEAD as the installed version
-_myflec_update_record() {
-	mkdir -p "${1%/*}" && git -C "$_repo" rev-parse HEAD >"$1"
-}
-
 # Modified files of ~/.bashrc.d tracked by your backup repo (myflec backup)
 # that are not a version shipped by the repo: your own unsaved changes.
 # Shipped versions (e.g. left by a previous update) need no saving.
@@ -391,11 +436,11 @@ _myflec_update_unsaved() {
 }
 
 _myflec_update() {
-	local _repo _assume_yes
+	local _repo _local _assume_yes
 	_myflec_repo_args update "$@" || return 1
 
 	local _live="$HOME/.bashrc.d"
-	if [ "$(cd "$_live" 2>/dev/null && pwd -P)" = "$(cd "$_repo/.bashrc.d" && pwd -P)" ]; then
+	if [ "$_local" -eq 1 ] && [ "$(cd "$_live" 2>/dev/null && pwd -P)" = "$(cd "$_repo/.bashrc.d" && pwd -P)" ]; then
 		echo "myflec update: $_live is the repo itself, use git pull." >&2
 		return 1
 	fi
@@ -409,11 +454,15 @@ _myflec_update() {
 		return 1
 	fi
 
-	echo "Pulling $_repo ..."
-	git -C "$_repo" pull --ff-only || {
-		echo "myflec update: pull failed, repo left as is." >&2
-		return 1
-	}
+	if [ "$_local" -eq 1 ]; then
+		echo "Pulling $_repo ..."
+		git -C "$_repo" pull --ff-only || {
+			echo "myflec update: pull failed, repo left as is." >&2
+			return 1
+		}
+	else
+		_myflec_fetch || return 1
+	fi
 
 	# Commit of the last update, if still known to the repo
 	local _state="${XDG_STATE_HOME:-$HOME/.local/state}/myflec/deployed" _base=""
@@ -463,13 +512,18 @@ _myflec_update() {
 		_myflec_update_list "Kept, your changes (unchanged upstream)" "${_local[@]}"
 		_myflec_update_list "Kept, your changes (removed upstream)" "${_drop[@]}"
 		rm -rf "$_new"
-		_myflec_update_record "$_state"
+		_myflec_record
 		return 0
 	fi
 
 	echo ""
 	echo "Update ~/.bashrc.d: ${_base:+${_base:0:7} -> }$(git -C "$_repo" log --format='%h (%cs) %s' -1)"
 	echo ""
+	if [ -n "$_base" ]; then
+		echo "  Changes since your version:"
+		git -C "$_repo" log --no-merges --format='    %h %s' "$_base..HEAD" -- .bashrc.d | head -n 20
+		echo ""
+	fi
 	_myflec_update_list "New" "${_add[@]}"
 	_myflec_update_list "Updated" "${_upd[@]}"
 	_myflec_update_list "Removed" "${_del[@]}"
@@ -501,7 +555,7 @@ _myflec_update() {
 	done
 	rm -rf "$_new"
 	rmdir "$_backup_dir" "${_backup_dir%/*}" 2>/dev/null
-	_myflec_update_record "$_state"
+	_myflec_record
 
 	echo "myflec update: done. Open a new shell (exec bash) to load it."
 	if [ -d "$_DOTFILES_DIR" ] && [ -n "$(_dot_git status --porcelain -- .bashrc.d 2>/dev/null)" ]; then
