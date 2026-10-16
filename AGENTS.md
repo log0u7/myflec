@@ -10,7 +10,7 @@ This file is the durable, agent-facing context.
   - Core modules are prefixed with `_` and load first, alphabetically.
   - Tool modules load next, alphabetically.
   - `_myflec.bash` provides the `myflec` command, the single user-facing
-    entry point: `status`, `reload [--full]`, `deploy`, and the backup
+    entry point: `status`, `reload [--full]`, `deploy`, `update`, and the backup
     commands `init`, `add`, `rm`, `submodule [add|update]`, `backup`, `restore`, `sync`, `changes`,
     `files`, `remote [add|rm]`.
   - The loader is invoked from `~/.bashrc` via the `profile` snippet.
@@ -44,6 +44,10 @@ Section order: **Purpose** (what it does) -> **Usage** (how to use it) ->
   configs; use clearly generic placeholders.
 - Docker-run modules (zero-install tools): `_myflec_docker_fallback`
   (native binary first, else `docker run --rm` with `$PWD` on `/work`).
+  Any container that writes host files runs as the caller
+  (`--user "$(id -u):$(id -g)"`); one that also needs the docker socket
+  adds `--group-add "$(stat -c %g /var/run/docker.sock)"`. Persistent
+  tool state goes under `${XDG_CONFIG_HOME:-$HOME/.config}/<tool>`.
   Pin major version tags when available (e.g. `:4`, `:v2`, `:1`).
 
 ## Do not break
@@ -130,6 +134,13 @@ agents and humans:
   with full unfiltered output, confirmation, `--backup --backup-dir` under
   `${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/`, then functional
   checks (`ssh -G` forges resolve an existing IdentityFile, git identity set).
+- Updates go through `myflec update`: `git pull --ff-only`, then only
+  `~/.bashrc.d` from `git archive HEAD`. A live file is replaced or removed
+  only when its blob is a version the repo shipped at that path (path
+  history); otherwise it is kept and the new version written as
+  `<file>.myflec-new`. Last installed commit: `$XDG_STATE_HOME/myflec/deployed`.
+  Refuses to run while the user's backup repo holds unsaved, non-shipped
+  changes under `.bashrc.d`.
 - Git backups go through `myflec init <url>...`, `myflec backup [msg]` and
   `myflec restore <url>` (thin facades over the `_dotfiles.bash` toolbox):
   bare repo at `~/.dotfiles`, work-tree `$HOME`, push to every configured

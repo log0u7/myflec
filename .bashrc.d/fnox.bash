@@ -8,7 +8,10 @@ if _myflec_has fnox; then
     # current directory if a fnox.toml (or parent) is found.
     # No-op silently when no fnox.toml is present.
     _fnox_load() { fnox load 2>/dev/null; }
-    PROMPT_COMMAND="_fnox_load;${PROMPT_COMMAND:-}"
+    case ";${PROMPT_COMMAND:-};" in
+    *";_fnox_load;"*) ;;
+    *) PROMPT_COMMAND="_fnox_load${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
+    esac
 
     # Short aliases
     alias fn='fnox'

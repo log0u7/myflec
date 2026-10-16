@@ -90,7 +90,7 @@ if ! _myflec_has mise; then
 	}
 fi
 
-# Bash completions for NPM (only if mise not managing it)
+# Bash completions for npm (system, NVM or mise-managed alike)
 if _myflec_has npm; then
 	eval "$(npm completion bash 2>/dev/null)"
 fi

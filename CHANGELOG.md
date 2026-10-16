@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `myflec update [-C repo] [--yes]`: pulls the repo and updates
+  `~/.bashrc.d` only. Modules you never changed are updated or removed,
+  modules you changed are kept (new version saved as `<file>.myflec-new`),
+  your own modules are never touched, replaced files are backed up. Refuses
+  to run while your backup repo holds unsaved changes of yours
 - `myflec add <path>...`, `myflec rm <path>...` (stop tracking, file
   kept on disk) and `myflec submodule add <url> <path> | update`: the
   backup workflow no longer needs raw `dot` commands.
@@ -35,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Removed the empty `fd.bash` module (fd needs no setup, its fzf
+  integration lives in `fzf.bash`)
 - DRY/KISS refactor, no behavior change: shared helpers `_myflec_has`
   (single tool guard), `_myflec_modules` (module order for the loader,
   `myflec status` and `myflec reload`), `_dot_git` (every backup repo
@@ -48,6 +55,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `myflec deploy` copied the whole working tree, including untracked
+  files (test artefacts such as `.local/state`, tool configs) over the live
+  `$HOME`; it now deploys the committed state (`git archive HEAD`)
+- `lazydocker` mounted the literal `/yourpath` README placeholder; its
+  config now lives in `${XDG_CONFIG_HOME:-~/.config}/lazydocker`
+- Docker-run tools wrote host files as root: `sherlock` lost its results
+  inside the container, `yq -i` (docker fallback) and the lazydocker config
+  left root-owned files. sherlock now writes to the current directory, and
+  sherlock, lazydocker and the glow/mdq/yq/jq fallbacks run as the calling
+  user (lazydocker keeps socket access through the socket group)
+- `_config.bash` replaced `PROMPT_COMMAND`, dropping hooks set before the
+  loader and, on `myflec reload`, the starship hook; fnox stacked its hook
+  on each reload. Both now add their hook once
 - `myflec reload` sourced core modules twice (`*.bash` also matches
   `_*.bash`), and every reload prepended `~/.cargo/bin` to `PATH` again
 - `fSshKeygen` and `_config.bash` leaked variables (`email`, `user`,
