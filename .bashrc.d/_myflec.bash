@@ -11,8 +11,12 @@
 #   myflec reload [--full]          -> re-source modules (--full: the whole loader)
 #   myflec deploy [-C repo] [--yes] -> safe rsync deploy (dry run, confirm, backup, checks)
 #   myflec init <url> [<url>...]    -> create the backup repo (first URL = origin)
+#   myflec add <path>...            -> start tracking files in the backup
+#   myflec rm <path>...             -> stop tracking files (kept on disk)
+#   myflec submodule add <url> <path> -> track an embedded git repo
+#   myflec submodule update         -> init and update embedded repos
 #   myflec backup [message]         -> add -u, commit, push to every remote
-#   myflec restore <url>            -> restore live state from a backup repo
+#   myflec restore <url>            -> restore live state (and submodules)
 #   myflec sync                     -> pull --rebase the backup repo
 #   myflec changes                  -> short status of tracked files
 #   myflec files                    -> list tracked files
@@ -48,6 +52,18 @@ fMyflec() {
 	init)
 		shift
 		_myflec_init "$@"
+		;;
+	add)
+		shift
+		_myflec_add "$@"
+		;;
+	rm)
+		shift
+		_myflec_rm "$@"
+		;;
+	submodule)
+		shift
+		_myflec_submodule "$@"
 		;;
 	backup)
 		shift
@@ -95,8 +111,13 @@ Deploy (repo -> $HOME):
 
 Backup ($HOME <-> git, bare repo at ~/.dotfiles):
   init <url> [<url>...]   Create the backup repo (extra URLs = push targets)
+  add <path>...           Start tracking files
+  rm <path>...            Stop tracking files (they stay on disk)
+  submodule add <url> <path>
+                          Track an embedded git repo (e.g. a project in $HOME)
+  submodule update        Init and update embedded repos
   backup [message]        Commit tracked changes and push to every remote
-  restore <url>           Clone a backup repo and check it out into $HOME
+  restore <url>           Clone a backup repo into $HOME (with submodules)
   sync                    Pull (rebase) the latest backup
   changes                 Short status of tracked files
   files                   List tracked files
@@ -107,10 +128,9 @@ Backup ($HOME <-> git, bare repo at ~/.dotfiles):
   help                    Show this help
 
 Notes:
-  - Track a new file with 'dot add <file>' ('dot' is git on the backup repo).
+  - 'dot' is plain git on the backup repo, for anything else (log, diff).
   - deploy never transfers the identity templates (.ssh/, .gitconfig,
     .gitconfig.d): they stay in myflec.exclude.lst.
-  - After a restore, embedded repos come back with: dot submodule update --init
   - Use 'myflec reload --full' after changing the loader or _myflec.bash.
 EOF
 }
@@ -299,6 +319,47 @@ _myflec_init() {
 	dotfiles-init "$@"
 }
 
+_myflec_add() {
+	if [ $# -eq 0 ]; then
+		echo "Usage: myflec add <path>..." >&2
+		return 1
+	fi
+	_dot_require_repo || return 1
+	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" add -- "$@"
+}
+
+_myflec_rm() {
+	if [ $# -eq 0 ]; then
+		echo "Usage: myflec rm <path>..." >&2
+		return 1
+	fi
+	_dot_require_repo || return 1
+	# --cached: stop tracking only, never delete the live file
+	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" rm -r --cached --quiet -- "$@" &&
+		echo "No longer tracked (files kept on disk): $*"
+}
+
+_myflec_submodule() {
+	_dot_require_repo || return 1
+	case "${1:-}" in
+	add)
+		if [ -z "${2:-}" ] || [ -z "${3:-}" ]; then
+			echo "Usage: myflec submodule add <url> <path>" >&2
+			return 1
+		fi
+		# submodule commands must run from the top of the work tree
+		(cd "$HOME" && git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" submodule add -- "$2" "$3")
+		;;
+	update)
+		(cd "$HOME" && git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" submodule update --init --recursive)
+		;;
+	*)
+		echo "Usage: myflec submodule add <url> <path> | update" >&2
+		return 1
+		;;
+	esac
+}
+
 _myflec_backup() {
 	# 'backup --init' kept for compatibility with earlier releases
 	if [ "${1:-}" = "--init" ]; then
@@ -314,7 +375,11 @@ _myflec_restore() {
 		echo "Usage: myflec restore <url>" >&2
 		return 1
 	fi
-	dotfiles-restore "$1"
+	dotfiles-restore "$1" || return 1
+	# Bring back embedded repos (e.g. myflec itself as a submodule)
+	if git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" ls-files --error-unmatch .gitmodules >/dev/null 2>&1; then
+		_myflec_submodule update
+	fi
 }
 
 _myflec_remote() {
