@@ -20,6 +20,7 @@ Everything is driven by one command: `myflec`.
 
 - [Install](#install)
 - [Update](#update)
+- [Uninstall](#uninstall)
 - [The myflec command](#the-myflec-command)
 - [Backup and restore](#backup-and-restore)
 - [Tools](#tools)
@@ -32,12 +33,19 @@ Everything is driven by one command: `myflec`.
 
 ## Install
 
+One line:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/log0u7/myflec/main/install.sh | bash
 exec bash
 ```
 
-Prefer reading a script before running it:
+That is all. The installer shows what it will change and asks before doing
+anything.
+
+### Read the script first
+
+Piping a script into bash means trusting it blindly. To review it:
 
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/log0u7/myflec/main/install.sh
@@ -45,33 +53,47 @@ less install.sh
 bash install.sh
 ```
 
-The installer needs `git`, `rsync` and `tar`. It runs `myflec deploy`, which
-shows a dry run, asks for confirmation, backs up every overwritten file under
-`~/.local/state/myflec-backup/<date>/` and checks the SSH and git identity
-setup, then it hooks the loader into `~/.bashrc` once.
+### From a clone
 
-From a clone instead (to hack on MyFlec):
+To hack on MyFlec, or without curl:
 
 ```bash
 git clone https://github.com/log0u7/myflec ~/myflec
 bash ~/myflec/install.sh -C ~/myflec
 ```
 
-Identity templates (`.ssh/`, `.gitconfig`, `.gitconfig.d`) are never
-deployed: they are generic placeholders, see
-[SSH and Git identities](#ssh-and-git-identities).
+### What the installer does
+
+- checks that `git`, `rsync` and `tar` are available;
+- fetches MyFlec (GitHub, then GitLab and NotABug if unreachable);
+- runs `myflec deploy`: shows a dry run, asks for confirmation, backs up
+  every file it overwrites under `~/.local/state/myflec-backup/<date>/`,
+  then checks the SSH and git identity setup (warnings only);
+- adds the loader to `~/.bashrc`, once.
+
+It never installs the identity templates (`.ssh/`, `.gitconfig`,
+`.gitconfig.d`): they are generic placeholders, see
+[SSH and Git identities](#ssh-and-git-identities). `--yes` skips the
+confirmation, for unattended installs (`curl ... | bash -s -- --yes`).
 
 ## Update
+
+When an update is available, a new shell tells you:
+
+```
+myflec: update available (3 change(s) since 8b237ad), run 'myflec update'
+```
+
+Then:
 
 ```bash
 myflec update
 exec bash
 ```
 
-`update` fetches the latest MyFlec online (GitHub, then GitLab and NotABug
-if unreachable; `MYFLEC_URL` to pick another), shows what changed since your
-version and what it will do, then updates `~/.bashrc.d` only, never your
-configuration files (`.gitconfig`, `.ssh/`, prompt, aliases):
+`update` lists the changes since your version and what it will do, asks,
+then updates `~/.bashrc.d` only, never your configuration files
+(`.gitconfig`, `.ssh/`, prompt, aliases):
 
 - a module you never changed is updated, or removed if MyFlec dropped it;
 - a module you changed is kept as is. If MyFlec changed it too, the new
@@ -85,9 +107,36 @@ If your [backup](#backup-and-restore) tracks `~/.bashrc.d`, `update` first
 refuses to run while it holds unsaved changes of yours, and reminds you to
 run `myflec backup` afterwards.
 
-To update from a local clone instead (pulled first), use
-`myflec update -C ~/myflec` or set `MYFLEC_REPO=~/myflec`. The online copy
-lives in `~/.cache/myflec/repo` and can be deleted at any time.
+### Update check
+
+The check never slows your shell down: a new interactive shell only reads a
+local file, and at most once a day a background job fetches MyFlec to count
+the changes to the modules. The result shows up in the next shell. Nothing
+is ever installed without `myflec update`.
+
+### Settings
+
+| Variable | Effect |
+|---|---|
+| `MYFLEC_NO_UPDATE_CHECK=1` | Disable the update check (also off when `CI` is set) |
+| `MYFLEC_URL=<url> [<url>...]` | Fetch MyFlec from these git URLs instead of the mirrors |
+| `MYFLEC_REPO=<clone>` | Use a local clone (pulled on update) instead of fetching; disables the check |
+
+The online copy lives in `~/.cache/myflec/repo` and can be deleted at any
+time. `-C <clone>` on `deploy` or `update` works like `MYFLEC_REPO` for one
+run.
+
+## Uninstall
+
+```bash
+sed -i '/# include loader/,/^fi$/d' ~/.bashrc   # remove the loader hook
+rm -rf ~/.bashrc.d ~/.cache/myflec ~/.local/state/myflec
+```
+
+Files that `deploy` replaced (for instance `~/.bash_aliases` or
+`~/.config/starship.toml`) have their previous version under
+`~/.local/state/myflec-backup/<date>/`. Your backup repo (`~/.dotfiles`) is
+left untouched.
 
 ## The myflec command
 
