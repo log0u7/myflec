@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `myflec update [-C repo] [--yes]`: pulls the repo and updates
+  `~/.bashrc.d` only. Modules you never changed are updated or removed,
+  modules you changed are kept (new version saved as `<file>.myflec-new`),
+  your own modules are never touched, replaced files are backed up. Refuses
+  to run while your backup repo holds unsaved changes of yours
 - `myflec add <path>...`, `myflec rm <path>...` (stop tracking, file
   kept on disk) and `myflec submodule add <url> <path> | update`: the
   backup workflow no longer needs raw `dot` commands.

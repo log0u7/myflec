@@ -19,6 +19,7 @@ Everything is driven by one command: `myflec`.
 ## Table of Contents
 
 - [Install](#install)
+- [Update](#update)
 - [The myflec command](#the-myflec-command)
 - [Backup and restore](#backup-and-restore)
 - [Tools](#tools)
@@ -47,8 +48,30 @@ Identity templates (`.ssh/`, `.gitconfig`, `.gitconfig.d`) are never
 deployed: they are generic placeholders, see
 [SSH and Git identities](#ssh-and-git-identities).
 
-To update later, pull the repo and run `myflec deploy -C ~/myflec` again,
-then `myflec reload`.
+## Update
+
+```bash
+myflec update -C ~/myflec       # or set MYFLEC_REPO=~/myflec once
+exec bash
+```
+
+`update` pulls the repo, then updates `~/.bashrc.d` only, never your
+configuration files (`.gitconfig`, `.ssh/`, prompt, aliases):
+
+- a module you never changed is updated, or removed if MyFlec dropped it;
+- a module you changed is kept as is. If MyFlec changed it too, the new
+  version lands next to it as `<file>.myflec-new` (not loaded) for you to
+  merge;
+- your own modules are never touched;
+- every replaced or removed file is backed up under
+  `~/.local/state/myflec-backup/<date>/`.
+
+If your [backup](#backup-and-restore) tracks `~/.bashrc.d`, `update` first
+refuses to run while it holds unsaved changes of yours, and reminds you to
+run `myflec backup` afterwards.
+
+On an install older than `update`, run it once from the repo:
+`. ~/myflec/.bashrc.d/_myflec.bash && myflec update -C ~/myflec`.
 
 ## The myflec command
 
@@ -56,7 +79,8 @@ then `myflec reload`.
 |---|---|
 | `myflec status` | List loaded modules (core then tool) |
 | `myflec reload [--full]` | Re-source modules in the current shell (`--full`: the whole loader) |
-| `myflec deploy [-C repo] [--yes]` | Deploy the repo to `$HOME` (dry run, confirm, backup, checks) |
+| `myflec deploy [-C repo] [--yes]` | First install of the repo to `$HOME` (dry run, confirm, backup, checks) |
+| `myflec update [-C repo] [--yes]` | Pull and update `~/.bashrc.d`, keeping your changes |
 | `myflec init <url> [<url>...]` | Create the backup repo, extra URLs become push targets |
 | `myflec add <path>...` | Start tracking files in the backup |
 | `myflec rm <path>...` | Stop tracking files (they stay on disk) |
