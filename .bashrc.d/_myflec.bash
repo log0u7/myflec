@@ -315,7 +315,7 @@ _myflec_add() {
 		return 1
 	fi
 	_dot_require_repo || return 1
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" add -- "$@"
+	_dot_git add -- "$@"
 }
 
 _myflec_rm() {
@@ -325,7 +325,7 @@ _myflec_rm() {
 	fi
 	_dot_require_repo || return 1
 	# --cached: stop tracking only, never delete the live file
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" rm -r --cached --quiet -- "$@" &&
+	_dot_git rm -r --cached --quiet -- "$@" &&
 		echo "No longer tracked (files kept on disk): $*"
 }
 
@@ -338,10 +338,10 @@ _myflec_submodule() {
 			return 1
 		fi
 		# submodule commands must run from the top of the work tree
-		(cd "$HOME" && git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" submodule add -- "$2" "$3")
+		(cd "$HOME" && _dot_git submodule add -- "$2" "$3")
 		;;
 	update)
-		(cd "$HOME" && git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" submodule update --init --recursive)
+		(cd "$HOME" && _dot_git submodule update --init --recursive)
 		;;
 	*)
 		echo "Usage: myflec submodule add <url> <path> | update" >&2
@@ -367,7 +367,7 @@ _myflec_restore() {
 	fi
 	dotfiles-restore "$1" || return 1
 	# Bring back embedded repos (e.g. myflec itself as a submodule)
-	if git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" ls-files --error-unmatch .gitmodules >/dev/null 2>&1; then
+	if _dot_git ls-files --error-unmatch .gitmodules >/dev/null 2>&1; then
 		_myflec_submodule update
 	fi
 }
