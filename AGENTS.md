@@ -75,7 +75,7 @@ Key naming convention: `<forge>_<label>_<type>`
 
 Forges: `github.com`, `gitlab.com`, `notabug.org`.
 
-### Advanced SSH patterns (documented in README)
+### Advanced SSH patterns (documented in SSH.md)
 
 - **Self-hosted forges**: `Host git.company.work` with `User git`, same as
   public forges but internal. Git identity via `includeIf` + repo path.

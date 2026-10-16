@@ -15,12 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `myflec restore`. The `dotfiles-*` functions and `myflec backup --init`
   remain available for compatibility; their hints now point to the
   `myflec` names
+- `SSH.md`: SSH identity model and advanced SSH patterns, moved out of
+  the README (repo-only, excluded from deployment)
 - SSH over 443 as the main route for public forges: `.ssh/config.d/forges`
   routes `github.com` -> `ssh.github.com:443` and `gitlab.com` ->
   `altssh.gitlab.com:443` (official endpoints, host fingerprints verified
   against `known_hosts`). First-match override of the forge blocks in
   `.ssh/config` (comment added there); notabug.org stays on port 22 (no 443
-  endpoint). Documented in README Advanced SSH Patterns #9 and AGENTS.md
+  endpoint). Documented in SSH.md (Advanced patterns #9) and AGENTS.md
 - `.bashrc.d/opencode.bash`: opencode agent module exporting plugin env
   defaults (`WORKFLOW_GUARD_REQUIRE_REVIEW` for workflow-guard,
   `OPENCODE_WORKTREE_GUARD_MAIN_BRANCHES` for worktree-guard), guarded by
