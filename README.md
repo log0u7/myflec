@@ -234,7 +234,7 @@ order, then starts Starship.
 | `_myflec.bash` | The `myflec` command |
 | `_shopts.bash` | Bash `shopt` options |
 | `mise.bash`, `fnox.bash` | Activation, hooks, aliases, completion |
-| `bat`, `ripgrep`, `fd`, `fzf`, `zoxide`, `direnv`, `atuin`, `lazygit`, `delta`, `tldr`, `lsd` | Modern CLI integration |
+| `bat`, `ripgrep`, `fzf` (with fd), `zoxide`, `direnv`, `atuin`, `lazygit`, `delta`, `tldr`, `lsd` | Modern CLI integration |
 | `glow`, `mdq`, `yq`, `jq`, `docker` | Docker-run tools and Docker aliases |
 | `forge-cli.bash` | `gh` and `glab` completion and aliases |
 | `python`, `go`, `rust`, `nodejs` | Language aliases, fallback version managers when mise is absent |
