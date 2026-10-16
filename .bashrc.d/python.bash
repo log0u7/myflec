@@ -18,7 +18,7 @@ alias pyv='python --version' # Show Python version
 alias pywhich='which python' # Find Python executable
 
 # Pip package management (fallback when mise is not available)
-if ! command -v mise >/dev/null 2>&1; then
+if ! _myflec_has mise; then
 	alias pipi='pip install'                        # Install package
 	alias pips='pip show'                           # Show package details
 	alias pipu='pip uninstall'                      # Uninstall package
@@ -63,7 +63,7 @@ venvdel() {
 }
 
 # uv - fast Python package manager (optional, via mise or standalone)
-if command -v uv >/dev/null 2>&1; then
+if _myflec_has uv; then
 	alias uvvenv='uv venv'     # Create virtual environment
 	alias uvpip='uv pip'       # Pip wrapper
 	alias uvsync='uv sync'     # Sync from pyproject.toml
@@ -74,7 +74,7 @@ if command -v uv >/dev/null 2>&1; then
 fi
 
 # poetry - Python dependency manager (optional, via mise or standalone)
-if command -v poetry >/dev/null 2>&1; then
+if _myflec_has poetry; then
 	alias po='poetry'                                                       # Short alias
 	alias poi='poetry install'                                              # Install dependencies
 	alias poa='poetry add'                                                  # Add dependency

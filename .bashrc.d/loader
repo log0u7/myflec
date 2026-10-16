@@ -7,10 +7,31 @@ case "${LC_ALL:-${LANG:-}}" in
     *) _myflec_ok="+" ;;
 esac
 
+# Shared helpers, kept defined after loading (used by modules and myflec).
+
+# True when a command is available. Single guard for every optional tool.
+_myflec_has() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Print module paths in load order: core (_*.bash) then tools, each
+# alphabetical. Single source of truth for the loader, myflec status/reload.
+_myflec_modules() {
+    local _dir="$1" _f
+    for _f in "$_dir"/_*.bash; do
+        [ -r "$_f" ] && printf '%s\n' "$_f"
+    done
+    for _f in "$_dir"/*.bash; do
+        case "${_f##*/}" in
+            _*) continue ;;
+        esac
+        [ -r "$_f" ] && printf '%s\n' "$_f"
+    done
+}
+
 # Internal loader: source a module and optionally print a debug line
 _myflec_load() {
     local _f="$1"
-    [ -r "$_f" ] || return
     source "$_f"
     if [ -n "$MYFLEC_DEBUG" ]; then
         local _name
@@ -20,26 +41,18 @@ _myflec_load() {
     fi
 }
 
-# 1. Core modules first (prefixed with _), in alphabetical order
-for _myflec_file in "$HOME"/.bashrc.d/_*.bash; do
+mapfile -t _myflec_files < <(_myflec_modules "$HOME/.bashrc.d")
+for _myflec_file in "${_myflec_files[@]}"; do
     _myflec_load "$_myflec_file"
 done
 
-# 2. Tool modules (everything else), in alphabetical order
-for _myflec_file in "$HOME"/.bashrc.d/*.bash; do
-    case "$(basename "$_myflec_file")" in
-        _*) continue ;;
-    esac
-    _myflec_load "$_myflec_file"
-done
-
-unset _myflec_ok _myflec_file
+unset _myflec_ok _myflec_file _myflec_files
 unset -f _myflec_load
 
 # Capture myflec-defined aliases for smart reload (unset on reload, not user aliases)
 mapfile -t _MYFLEC_ALIASES < <(alias -p | sed -n "s/^alias \([^=]*\)=.*/\1/p")
 
 # Starship
-if command -v starship >/dev/null 2>&1; then
+if _myflec_has starship; then
     eval "$(starship init bash)"
 fi

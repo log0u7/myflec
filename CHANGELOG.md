@@ -35,6 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- DRY/KISS refactor, no behavior change: shared helpers `_myflec_has`
+  (single tool guard), `_myflec_modules` (module order for the loader,
+  `myflec status` and `myflec reload`), `_dot_git` (every backup repo
+  call), `_myflec_docker_fallback` (glow, mdq, yq, jq), `_myflec_need`
+  (usage checks); go and rust paths go through `setup_tool_path`;
+  `fSshKeygen` loops over key types
 - README rewritten around the `myflec` command: one install path, one
   command table, a backup and restore guide, a compatibility table for the
   former `dotfiles-*` functions. Removed the stale `powerline.bash` entry
@@ -42,10 +48,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `myflec reload` sourced core modules twice (`*.bash` also matches
+  `_*.bash`), and every reload prepended `~/.cargo/bin` to `PATH` again
+- `fSshKeygen` and `_config.bash` leaked variables (`email`, `user`,
+  `domain`, `most`) into the interactive shell
 - README install procedure: `myflec deploy` was documented after sourcing
   `~/.bashrc` on a machine where `~/.bashrc.d/` does not exist yet; the
   bootstrap now sources `_myflec.bash` from the clone
-
 - Git identity templates: `hasconfig:remote.*.url` includes for
   github/gitlab (declared last so the matching forge identity wins on
   multi-forge mirrors, and independent of symlinked repo paths where

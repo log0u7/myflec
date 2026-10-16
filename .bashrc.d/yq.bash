@@ -6,6 +6,4 @@
 # Falls back to docker run (zero-install) when only docker is present.
 # Supports pipes (echo '...' | yq ...) and files in $PWD.
 
-if ! command -v yq >/dev/null 2>&1 && command -v docker >/dev/null 2>&1; then
-    alias yq='docker run --rm -i -v "$PWD":/work -w /work mikefarah/yq:4'
-fi
+_myflec_docker_fallback yq mikefarah/yq:4

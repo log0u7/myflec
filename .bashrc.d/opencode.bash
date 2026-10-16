@@ -3,10 +3,10 @@
 #
 # Purpose: environment defaults for the opencode-workflow-guard and
 # opencode-worktree-guard plugins. Sane defaults: caller-provided values
-# win. Everything is guarded by `command -v opencode`: without the
+# win. Everything is guarded by `_myflec_has opencode`: without the
 # binary, the module is a no-op.
 
-if command -v opencode >/dev/null 2>&1; then
+if _myflec_has opencode; then
 	# workflow-guard: skip the secondary review gate on PR creation (solo work).
 	export WORKFLOW_GUARD_REQUIRE_REVIEW="${WORKFLOW_GUARD_REQUIRE_REVIEW:-0}"
 

@@ -26,7 +26,7 @@ alias ctree='cargo tree'                       # Show dependency tree
 alias cwatch='cargo watch -x run'              # Automatically recompile on change
 
 # Rustup and toolchain management (fallback when mise is not available)
-if ! command -v mise >/dev/null 2>&1; then
+if ! _myflec_has mise; then
     alias rustupup='rustup update'                 # Update Rust toolchain
     alias rustv='rustc --version'                  # Show Rust version
     alias cargov='cargo --version'                 # Show Cargo version
@@ -38,5 +38,4 @@ if ! command -v mise >/dev/null 2>&1; then
 fi
 
 # Rustup env
-export CARGO_HOME="$HOME/.cargo"
-export PATH="$CARGO_HOME/bin:$PATH"
+setup_tool_path "CARGO_HOME" "$HOME/.cargo" "/bin"

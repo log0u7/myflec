@@ -20,9 +20,14 @@
 
 _DOTFILES_DIR="$HOME/.dotfiles"
 
+# git on the bare repo, with $HOME as work tree. Every call goes through it.
+_dot_git() {
+	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" "$@"
+}
+
 # Expose a bare-git alias when the repo exists
 if [ -d "$_DOTFILES_DIR" ]; then
-	alias dot='git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME"'
+	alias dot=_dot_git
 fi
 
 # ---- Helpers -----------------------------------------------------------
@@ -57,25 +62,25 @@ dotfiles-init() {
 	fi
 
 	git init --bare "$_DOTFILES_DIR" || return 1
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" config status.showUntrackedFiles no
+	_dot_git config status.showUntrackedFiles no
 
 	# Set primary remote (fetch + push)
 	local primary="$1"
 	shift
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote add origin "$primary"
+	_dot_git remote add origin "$primary"
 
 	# Explicitly start the push URL list with the primary URL: the first
 	# `set-url --add --push` REPLACES the implicit fetch-url push, so without
 	# this line extra URLs would silently shadow the primary push target.
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote set-url --add --push origin "$primary"
+	_dot_git remote set-url --add --push origin "$primary"
 
 	# Add extra push URLs (multi-forge)
 	for url in "$@"; do
-		git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote set-url --add --push origin "$url"
+		_dot_git remote set-url --add --push origin "$url"
 	done
 
 	# First push must not require manual upstream setup
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" config push.autoSetupRemote true
+	_dot_git config push.autoSetupRemote true
 
 	echo "Dotfiles bare repo initialized at $_DOTFILES_DIR"
 	echo "Primary remote: $primary"
@@ -114,24 +119,20 @@ dotfiles-restore() {
 	local tmp_backup
 	tmp_backup="$(mktemp -d)"
 
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" checkout 2>"$tmp_backup/checkout.err"
-	local exit_code=$?
-
-	if [ $exit_code -ne 0 ]; then
+	if ! _dot_git checkout 2>"$tmp_backup/checkout.err"; then
 		echo "Some files conflict with existing ones." >&2
 		echo "Backing up conflicting files to $tmp_backup/conflicts/" >&2
-		# Backup conflicting files before force-checkout
-		git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" checkout 2>&1 |
-			grep '^\s' | sed 's/^\s*//' | while read -r file; do
+		# git lists the conflicting paths as tab-indented lines
+		grep '^\s' "$tmp_backup/checkout.err" | sed 's/^\s*//' | while read -r file; do
 			mkdir -p "$(dirname "$tmp_backup/conflicts/$file")"
 			[ -f "$HOME/$file" ] && cp "$HOME/$file" "$tmp_backup/conflicts/$file"
 		done
 
-		git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" checkout -f || return 1
+		_dot_git checkout -f || return 1
 		echo "Conflicting files backed up to: $tmp_backup/conflicts/"
 	fi
 
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" config status.showUntrackedFiles no
+	_dot_git config status.showUntrackedFiles no
 
 	echo "Dotfiles restored from $url"
 	echo "Configs are now live in \$HOME. Run 'myflec changes' to verify."
@@ -141,12 +142,12 @@ dotfiles-restore() {
 
 dotfiles-status() {
 	_dot_require_repo || return 1
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" status -sb
+	_dot_git status -sb
 }
 
 dotfiles-list() {
 	_dot_require_repo || return 1
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" ls-files
+	_dot_git ls-files
 }
 
 # ---- Backup ------------------------------------------------------------
@@ -154,24 +155,23 @@ dotfiles-list() {
 dotfiles-backup() {
 	_dot_require_repo || return 1
 	local msg="${1:-dotfiles update $(date +%Y-%m-%d_%H:%M)}"
-	shift 2>/dev/null || true
 
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" add -u || return 1
+	_dot_git add -u || return 1
 
-	if git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" diff --cached --quiet; then
+	if _dot_git diff --cached --quiet; then
 		echo "Nothing to commit (no changes in tracked files)."
 		return 0
 	fi
 
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" commit -m "$msg" || return 1
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" push || return 1
+	_dot_git commit -m "$msg" || return 1
+	_dot_git push
 }
 
 # ---- Sync --------------------------------------------------------------
 
 dotfiles-sync() {
 	_dot_require_repo || return 1
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" pull --rebase || return 1
+	_dot_git pull --rebase
 }
 
 # ---- Multi-forge backup targets ----------------------------------------
@@ -182,7 +182,7 @@ dotfiles-addbackup() {
 		echo "Usage: myflec remote add <remote-url>"
 		return 1
 	fi
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote set-url --add --push origin "$1"
+	_dot_git remote set-url --add --push origin "$1"
 	echo "Added push target: $1"
 }
 
@@ -192,11 +192,11 @@ dotfiles-removebackup() {
 		echo "Usage: myflec remote rm <remote-url>"
 		return 1
 	fi
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote set-url --delete --push origin "$1"
+	_dot_git remote set-url --delete --push origin "$1"
 	echo "Removed push target: $1"
 }
 
 dotfiles-remotes() {
 	_dot_require_repo || return 1
-	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote -v
+	_dot_git remote -v
 }

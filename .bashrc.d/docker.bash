@@ -1,7 +1,7 @@
 # ~/.bashrc.d/docker.bash
 # export Docker & Docker compose env
 
-if command -v docker >/dev/null 2>&1; then
+if _myflec_has docker; then
 	export DOCKER_BUILDKIT=1
 	export COMPOSE_DOCKER_CLI_BUILD=1
 
