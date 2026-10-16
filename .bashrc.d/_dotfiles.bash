@@ -83,7 +83,7 @@ dotfiles-init() {
 	echo ""
 	echo "Next steps:"
 	echo "  myflec changes               -> status of tracked files"
-	echo "  dot add <file>               -> track a file"
+	echo "  myflec add <file>             -> track a file"
 	echo "  myflec backup 'first commit' -> commit and push"
 }
 

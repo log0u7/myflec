@@ -11,8 +11,8 @@ This file is the durable, agent-facing context.
   - Tool modules load next, alphabetically.
   - `_myflec.bash` provides the `myflec` command, the single user-facing
     entry point: `status`, `reload [--full]`, `deploy`, and the backup
-    commands `init`, `backup`, `restore`, `sync`, `changes`, `files`,
-    `remote [add|rm]`.
+    commands `init`, `add`, `rm`, `submodule [add|update]`, `backup`, `restore`, `sync`, `changes`,
+    `files`, `remote [add|rm]`.
   - The loader is invoked from `~/.bashrc` via the `profile` snippet.
 - `.bash_aliases` : native Debian/Ubuntu mechanism, sourced by the default
   `.bashrc`. Kept on purpose, separate from `.bashrc.d/`. Do not consolidate.
@@ -101,7 +101,8 @@ Forges: `github.com`, `gitlab.com`, `notabug.org`.
 ## Dotfiles deployment
 
 Bare git repo at `$HOME/.dotfiles` with `--work-tree=$HOME`.
-User-facing interface: `myflec init|backup|restore|sync|changes|files|remote`
+User-facing interface:
+`myflec init|add|rm|submodule|backup|restore|sync|changes|files|remote`
 (`_myflec.bash`), the only commands documented in README.
 Module `_dotfiles.bash` is the implementation and provides:
 - Alias `dot` (conditional on repo existence)

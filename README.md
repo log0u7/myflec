@@ -58,6 +58,10 @@ then `myflec reload`.
 | `myflec reload [--full]` | Re-source modules in the current shell (`--full`: the whole loader) |
 | `myflec deploy [-C repo] [--yes]` | Deploy the repo to `$HOME` (dry run, confirm, backup, checks) |
 | `myflec init <url> [<url>...]` | Create the backup repo, extra URLs become push targets |
+| `myflec add <path>...` | Start tracking files in the backup |
+| `myflec rm <path>...` | Stop tracking files (they stay on disk) |
+| `myflec submodule add <url> <path>` | Track an embedded git repo |
+| `myflec submodule update` | Init and update embedded repos |
 | `myflec backup [message]` | Commit tracked changes and push to every remote |
 | `myflec restore <url>` | Restore a backup into `$HOME` (new machine) |
 | `myflec sync` | Pull the latest backup |
@@ -85,7 +89,7 @@ echo '*' > ~/.gitignore
 echo '!.bashrc.d' >> ~/.gitignore
 echo '!.gitconfig' >> ~/.gitignore
 
-dot add .gitignore .bashrc.d .gitconfig
+myflec add .gitignore .bashrc.d .gitconfig
 myflec backup "initial commit"
 ```
 
@@ -93,7 +97,7 @@ myflec backup "initial commit"
 
 ```bash
 myflec changes                  # what changed
-dot add .config/foo.toml        # track a new file
+myflec add .config/foo.toml     # track a new file
 myflec backup "update foo"      # commit and push everywhere
 ```
 
@@ -101,11 +105,23 @@ myflec backup "update foo"      # commit and push everywhere
 
 ```bash
 myflec restore git@github.com:user/dotfiles.git
-dot submodule update --init     # only if the backup has submodules
 ```
 
 Files that would be overwritten are backed up to a temporary directory
-first; the path is printed.
+first; the path is printed. Submodules, if any, are restored too.
+
+To stop tracking a file without deleting it: `myflec rm <path>`.
+
+### Embedded repos
+
+A git repo living in `$HOME` (myflec itself, a vim plugin set...) is
+tracked as a submodule, by URL rather than by content:
+
+```bash
+myflec submodule add https://github.com/log0u7/myflec myflec
+myflec backup "track myflec"
+myflec submodule update         # resync after a pull or on another machine
+```
 
 ### Several forges
 
@@ -120,14 +136,15 @@ myflec remote rm git@gitlab.com:user/dotfiles.git
 ### How it works
 
 The backup is a git bare repo at `~/.dotfiles` whose work tree is `$HOME`:
-no symlinks, no copies. `dot` is plain git on that repo
-(`dot log`, `dot diff`, `dot reset HEAD file`) and exists only once the repo
-is created. Untracked files are hidden from status, and the `.gitignore`
+no symlinks, no copies. For anything `myflec` does not cover, `dot` is
+plain git on that repo (`dot log`, `dot diff`) and exists only once the
+repo is created. Untracked files are hidden from status, and the `.gitignore`
 whitelist prevents committing sensitive data by accident.
 
 ### Compatibility
 
-The former `dotfiles-*` functions still work:
+The former `dotfiles-*` functions and the raw `dot` (git) commands still
+work:
 
 | Former | Now |
 |---|---|
@@ -141,6 +158,10 @@ The former `dotfiles-*` functions still work:
 | `dotfiles-addbackup` | `myflec remote add` |
 | `dotfiles-removebackup` | `myflec remote rm` |
 | `myflec backup --init` | `myflec init` |
+| `dot add <path>` | `myflec add <path>` |
+| `dot rm --cached <path>` | `myflec rm <path>` |
+| `dot submodule add <url> <path>` | `myflec submodule add <url> <path>` |
+| `dot submodule update --init` | `myflec submodule update` |
 
 ## Tools
 

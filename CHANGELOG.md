@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `myflec add <path>...`, `myflec rm <path>...` (stop tracking, file
+  kept on disk) and `myflec submodule add <url> <path> | update`: the
+  backup workflow no longer needs raw `dot` commands.
+  `myflec restore` now also restores submodules when the backup has a
+  `.gitmodules`
 - `myflec` is now the single entry point for backups: new subcommands
   `myflec init`, `myflec sync`, `myflec changes`, `myflec files` and
   `myflec remote [add|rm <url>]`, on top of `myflec backup` and
