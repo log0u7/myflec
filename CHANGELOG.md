@@ -55,6 +55,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `myflec deploy` copied repo-only files into `$HOME` (`SECURITY.md`,
+  `.pre-commit-config.yaml`, `mise.toml.example`, `fnox.toml.example`):
+  they are now in `myflec.exclude.lst`
 - `myflec deploy` copied the whole working tree, including untracked
   files (test artefacts such as `.local/state`, tool configs) over the live
   `$HOME`; it now deploys the committed state (`git archive HEAD`)
