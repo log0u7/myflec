@@ -6,13 +6,17 @@
 # The bare repo lives at $HOME/.dotfiles, using $HOME as the working tree.
 # The 'dot' alias provides direct git access when the repo exists.
 #
-# Usage:
-#   First time:  dotfiles-init git@forge:user/dotfiles.git
-#   Quotidian:   dotfiles-status   -> see what changed
-#                dotfiles-backup   -> add, commit, push all tracked files
-#   New machine: dotfiles-restore git@forge:user/dotfiles.git
-#   Multi-forge: dotfiles-addbackup git@forge2:user/dotfiles.git
-#                dotfiles-remotes  -> verify
+# Usage: go through the 'myflec' command (_myflec.bash), which wraps this
+# toolbox. The dotfiles-* functions stay available for compatibility:
+#   dotfiles-init         -> myflec init
+#   dotfiles-backup       -> myflec backup
+#   dotfiles-restore      -> myflec restore
+#   dotfiles-sync         -> myflec sync
+#   dotfiles-status       -> myflec changes
+#   dotfiles-list         -> myflec files
+#   dotfiles-remotes      -> myflec remote
+#   dotfiles-addbackup    -> myflec remote add
+#   dotfiles-removebackup -> myflec remote rm
 
 _DOTFILES_DIR="$HOME/.dotfiles"
 
@@ -26,7 +30,7 @@ fi
 _dot_require_repo() {
 	[ -d "$_DOTFILES_DIR" ] && return 0
 	echo "Error: no dotfiles bare repo found at $_DOTFILES_DIR" >&2
-	echo "Run 'dotfiles-init <url>' or 'dotfiles-restore <url>' first." >&2
+	echo "Run 'myflec init <url>' or 'myflec restore <url>' first." >&2
 	return 1
 }
 
@@ -34,21 +38,21 @@ _dot_require_repo() {
 
 dotfiles-init() {
 	if [ -z "$1" ]; then
-		echo "Usage: dotfiles-init <remote-url> [<extra-push-url> ...]"
+		echo "Usage: myflec init <remote-url> [<extra-push-url> ...]"
 		echo ""
 		echo "Create a new bare dotfiles repo at $_DOTFILES_DIR."
 		echo "The first URL becomes the primary remote (fetch + push)."
 		echo "Additional URLs are added as extra push targets."
 		echo ""
 		echo "Example:"
-		echo "  dotfiles-init git@github.com:user/dotfiles.git"
-		echo "  dotfiles-init git@github.com:user/dotfiles.git git@gitlab.com:user/dotfiles.git"
+		echo "  myflec init git@github.com:user/dotfiles.git"
+		echo "  myflec init git@github.com:user/dotfiles.git git@gitlab.com:user/dotfiles.git"
 		return 1
 	fi
 
 	if [ -d "$_DOTFILES_DIR" ]; then
 		echo "Error: $_DOTFILES_DIR already exists." >&2
-		echo "Use 'dotfiles-restore <url>' to sync it, or remove it first." >&2
+		echo "Use 'myflec sync' to update it, or remove it first." >&2
 		return 1
 	fi
 
@@ -78,22 +82,22 @@ dotfiles-init() {
 	[ $# -gt 0 ] && echo "Extra push targets: $*"
 	echo ""
 	echo "Next steps:"
-	echo "  dotfiles-status        -> see what files would be tracked"
-	echo "  dot add <file>         -> track a file"
-	echo "  dotfiles-backup 'first commit' -> commit and push"
+	echo "  myflec changes               -> status of tracked files"
+	echo "  dot add <file>               -> track a file"
+	echo "  myflec backup 'first commit' -> commit and push"
 }
 
 # ---- Restore (no repo required) ----------------------------------------
 
 dotfiles-restore() {
 	if [ -z "$1" ]; then
-		echo "Usage: dotfiles-restore <clone-url>"
+		echo "Usage: myflec restore <clone-url>"
 		echo ""
 		echo "Clone an existing bare dotfiles repo to $_DOTFILES_DIR"
 		echo "and check out the files into \$HOME."
 		echo ""
 		echo "Example:"
-		echo "  dotfiles-restore git@github.com:user/dotfiles.git"
+		echo "  myflec restore git@github.com:user/dotfiles.git"
 		return 1
 	fi
 
@@ -130,7 +134,7 @@ dotfiles-restore() {
 	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" config status.showUntrackedFiles no
 
 	echo "Dotfiles restored from $url"
-	echo "Configs are now live in \$HOME. Run 'dotfiles-status' to verify."
+	echo "Configs are now live in \$HOME. Run 'myflec changes' to verify."
 }
 
 # ---- Status ------------------------------------------------------------
@@ -175,7 +179,7 @@ dotfiles-sync() {
 dotfiles-addbackup() {
 	_dot_require_repo || return 1
 	if [ -z "$1" ]; then
-		echo "Usage: dotfiles-addbackup <remote-url>"
+		echo "Usage: myflec remote add <remote-url>"
 		return 1
 	fi
 	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote set-url --add --push origin "$1"
@@ -185,7 +189,7 @@ dotfiles-addbackup() {
 dotfiles-removebackup() {
 	_dot_require_repo || return 1
 	if [ -z "$1" ]; then
-		echo "Usage: dotfiles-removebackup <remote-url>"
+		echo "Usage: myflec remote rm <remote-url>"
 		return 1
 	fi
 	git --git-dir="$_DOTFILES_DIR" --work-tree="$HOME" remote set-url --delete --push origin "$1"
