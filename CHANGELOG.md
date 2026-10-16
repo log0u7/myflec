@@ -40,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Removed the empty `fd.bash` module (fd needs no setup, its fzf
+  integration lives in `fzf.bash`)
 - DRY/KISS refactor, no behavior change: shared helpers `_myflec_has`
   (single tool guard), `_myflec_modules` (module order for the loader,
   `myflec status` and `myflec reload`), `_dot_git` (every backup repo
@@ -53,6 +55,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `lazydocker` mounted the literal `/yourpath` README placeholder; its
+  config now lives in `${XDG_CONFIG_HOME:-~/.config}/lazydocker`
+- `_config.bash` replaced `PROMPT_COMMAND`, dropping hooks set before the
+  loader and, on `myflec reload`, the starship hook; fnox stacked its hook
+  on each reload. Both now add their hook once
 - `myflec reload` sourced core modules twice (`*.bash` also matches
   `_*.bash`), and every reload prepended `~/.cargo/bin` to `PATH` again
 - `fSshKeygen` and `_config.bash` leaked variables (`email`, `user`,
