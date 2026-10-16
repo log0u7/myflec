@@ -5,14 +5,18 @@ if _myflec_has docker; then
 	export DOCKER_BUILDKIT=1
 	export COMPOSE_DOCKER_CLI_BUILD=1
 
-	# Sherlock
-	alias sherlock="docker run --rm -it sherlock/sherlock"
+	# Containers that write files run as the calling user, so what they
+	# create on the host belongs to you, not to root.
+
+	# Sherlock: result files (<user>.txt) land in the current directory
+	alias sherlock='docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD":/sherlock sherlock/sherlock'
 
 	# Dive is a docker layer analysing tool.
 	alias dive="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
 
-	# Lazydocker: config persisted in ${XDG_CONFIG_HOME:-~/.config}/lazydocker
-	alias lazydocker='mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/lazydocker" && docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v "${XDG_CONFIG_HOME:-$HOME/.config}/lazydocker":/.config/jesseduffield/lazydocker lazyteam/lazydocker'
+	# Lazydocker: config persisted in ${XDG_CONFIG_HOME:-~/.config}/lazydocker;
+	# --group-add gives the non-root container user access to the socket.
+	alias lazydocker='mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/lazydocker" && docker run --rm -it --user "$(id -u):$(id -g)" --group-add "$(stat -c %g /var/run/docker.sock)" -v /var/run/docker.sock:/var/run/docker.sock -v "${XDG_CONFIG_HOME:-$HOME/.config}/lazydocker":/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 
 	# Ctop - top-like container monitor
 	alias ctop="docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop:0.7.7"

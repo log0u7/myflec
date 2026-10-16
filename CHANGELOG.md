@@ -60,6 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `$HOME`; it now deploys the committed state (`git archive HEAD`)
 - `lazydocker` mounted the literal `/yourpath` README placeholder; its
   config now lives in `${XDG_CONFIG_HOME:-~/.config}/lazydocker`
+- Docker-run tools wrote host files as root: `sherlock` lost its results
+  inside the container, `yq -i` (docker fallback) and the lazydocker config
+  left root-owned files. sherlock now writes to the current directory, and
+  sherlock, lazydocker and the glow/mdq/yq/jq fallbacks run as the calling
+  user (lazydocker keeps socket access through the socket group)
 - `_config.bash` replaced `PROMPT_COMMAND`, dropping hooks set before the
   loader and, on `myflec reload`, the starship hook; fnox stacked its hook
   on each reload. Both now add their hook once

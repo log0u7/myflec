@@ -18,14 +18,15 @@ setup_tool_path() {
 }
 
 # Zero-install fallback: when <tool> has no native binary but docker is
-# available, alias it to a docker run of <image> with $PWD mounted on /work.
+# available, alias it to a docker run of <image> with $PWD mounted on /work,
+# as the calling user (files written in $PWD, e.g. yq -i, stay yours).
 # Returns 0 when the tool is usable (native or docker), 1 otherwise.
 _myflec_docker_fallback() {
     local tool="$1" image="$2"
     _myflec_has "$tool" && return 0
     _myflec_has docker || return 1
     # shellcheck disable=SC2139 # expand tool/image now, $PWD at call time
-    alias "$tool=docker run --rm -i -v \"\$PWD\":/work -w /work $image"
+    alias "$tool=docker run --rm -i --user \"\$(id -u):\$(id -g)\" -e HOME=/tmp -v \"\$PWD\":/work -w /work $image"
 }
 
 # Make and CD dir.
