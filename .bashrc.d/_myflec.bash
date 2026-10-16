@@ -137,47 +137,44 @@ EOF
 
 _myflec_status() {
 	local _dir="$1"
-	local _core=0 _tools=0
-	local _f _name
+	local _core=0 _tools=0 _f _name _kind
 
 	echo "MyFlec modules ($_dir)"
 	echo ""
 
-	for _f in "$_dir"/_*.bash; do
-		[ -r "$_f" ] || continue
-		_core=$((_core + 1))
+	while IFS= read -r _f; do
 		_name="$(basename "$_f" .bash)"
-		_name="${_name#_}"
-		printf "  core  %s\n" "$_name"
-	done
-
-	for _f in "$_dir"/*.bash; do
-		case "$(basename "$_f")" in
-		_*) continue ;;
+		case "$_name" in
+		_*)
+			_kind=core
+			_core=$((_core + 1))
+			;;
+		*)
+			_kind=tool
+			_tools=$((_tools + 1))
+			;;
 		esac
-		[ -r "$_f" ] || continue
-		_tools=$((_tools + 1))
-		_name="$(basename "$_f" .bash)"
-		printf "  tool  %s\n" "$_name"
-	done
+		printf "  %-4s  %s\n" "$_kind" "${_name#_}"
+	done < <(_myflec_modules "$_dir")
 
 	echo ""
-	echo "$((_core + _tools)) modules ($((_core)) core, $((_tools)) tool)"
+	echo "$((_core + _tools)) modules ($_core core, $_tools tool)"
+}
+
+# Unset previously tracked myflec aliases (preserves user aliases)
+_myflec_unset_aliases() {
+	local _a
+	for _a in "${_MYFLEC_ALIASES[@]}"; do
+		unalias "$_a" 2>/dev/null
+	done
 }
 
 _myflec_reload() {
-	local _dir="$1"
-	local _f _a
+	local _dir="$1" _f _files
 
-	# Unset previously tracked myflec aliases (preserves user aliases)
-	if [ ${#_MYFLEC_ALIASES[@]} -gt 0 ]; then
-		for _a in "${_MYFLEC_ALIASES[@]}"; do
-			unalias "$_a" 2>/dev/null
-		done
-	fi
-
-	for _f in "$_dir"/_*.bash "$_dir"/*.bash; do
-		[ -r "$_f" ] || continue
+	_myflec_unset_aliases
+	mapfile -t _files < <(_myflec_modules "$_dir")
+	for _f in "${_files[@]}"; do
 		source "$_f"
 	done
 
@@ -190,14 +187,7 @@ _myflec_reload() {
 _myflec_reload_full() {
 	local _dir="$1"
 
-	# Unset previously tracked myflec aliases (preserves user aliases)
-	if [ ${#_MYFLEC_ALIASES[@]} -gt 0 ]; then
-		local _a
-		for _a in "${_MYFLEC_ALIASES[@]}"; do
-			unalias "$_a" 2>/dev/null
-		done
-	fi
-
+	_myflec_unset_aliases
 	source "$_dir/loader"
 
 	echo "MyFlec reloaded (full). Note: PROMPT_COMMAND hooks may have accumulated."
