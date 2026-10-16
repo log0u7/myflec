@@ -17,7 +17,14 @@ export HISTSIZE=5000                              # Increase history size
 export HISTFILESIZE=10000                         # Increase the size of history file
 export HISTCONTROL=ignoredups:erasedups           # Ignore duplicate commands in history
 export HISTIGNORE="pwd:exit:clear"                # Ignore trivial commands
-export PROMPT_COMMAND="history -a"                # Append commands to history file after execution
+
+# Append commands to the history file after each one. Added to (never
+# replacing) PROMPT_COMMAND, once: other hooks (VTE, starship, direnv, fnox)
+# survive startup and myflec reload.
+case ";${PROMPT_COMMAND:-};" in
+*";history -a;"*) ;;
+*) PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a" ;;
+esac
 
 # Colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
