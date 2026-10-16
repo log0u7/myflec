@@ -38,5 +38,4 @@ if ! _myflec_has mise; then
 fi
 
 # Rustup env
-export CARGO_HOME="$HOME/.cargo"
-export PATH="$CARGO_HOME/bin:$PATH"
+setup_tool_path "CARGO_HOME" "$HOME/.cargo" "/bin"
