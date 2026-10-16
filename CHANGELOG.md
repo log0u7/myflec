@@ -55,6 +55,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `myflec deploy` copied the whole working tree, including untracked
+  files (test artefacts such as `.local/state`, tool configs) over the live
+  `$HOME`; it now deploys the committed state (`git archive HEAD`)
 - `lazydocker` mounted the literal `/yourpath` README placeholder; its
   config now lives in `${XDG_CONFIG_HOME:-~/.config}/lazydocker`
 - `_config.bash` replaced `PROMPT_COMMAND`, dropping hooks set before the

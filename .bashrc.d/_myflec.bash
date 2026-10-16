@@ -112,7 +112,8 @@ Modules:
 
 Install and update (repo -> $HOME):
   deploy [-C repo] [--yes]
-                          First install: dry run, confirm, backup, checks
+                          First install of the committed state (HEAD): dry
+                          run, confirm, backup, checks
   update [-C repo] [--yes]
                           Pull the repo, update ~/.bashrc.d only; files you
                           changed are kept (new version: <file>.myflec-new)
@@ -260,27 +261,38 @@ _myflec_deploy() {
 	_stamp="$(date +%F-%H%M%S)"
 	_backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/$_stamp"
 	local -a _flags=(-a --exclude-from "$_repo/myflec.exclude.lst")
-	local _stats _count
+	local _stats _count _src="$_repo"
+
+	# Deploy the committed state only: stray files of the working tree
+	# (test artefacts, local tool state) must never reach $HOME.
+	if git -C "$_repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+		_src="$(mktemp -d)" || return 1
+		git -C "$_repo" archive HEAD | tar -x -C "$_src" || return 1
+		echo "Source: $_repo at $(git -C "$_repo" log --format='%h %s' -1)"
+	fi
 
 	echo "Dry run (real target: \$HOME):"
-	_stats="$(rsync -avn --stats "${_flags[@]}" "$_repo/" "$HOME/")"
+	_stats="$(rsync -avn --stats "${_flags[@]}" "$_src/" "$HOME/")"
 	echo "$_stats"
 	_count="$(sed -n 's/^Number of regular files transferred: \([0-9,]*\)$/\1/p' <<<"$_stats" | tr -d ',')"
 	_count="${_count:-0}"
 
 	if [ "$_count" -eq 0 ]; then
 		echo "myflec deploy: nothing to deploy."
+		[ "$_src" != "$_repo" ] && rm -rf "$_src"
 		_myflec_deploy_checks
 		return $?
 	fi
 
 	if ! _myflec_confirm "$_assume_yes" "Deploy the $_count file(s) above to \$HOME (backup: $_backup_dir)?"; then
 		echo "myflec deploy: aborted."
+		[ "$_src" != "$_repo" ] && rm -rf "$_src"
 		return 1
 	fi
 
-	rsync "${_flags[@]}" --backup --backup-dir="$_backup_dir" "$_repo/" "$HOME/"
+	rsync "${_flags[@]}" --backup --backup-dir="$_backup_dir" "$_src/" "$HOME/"
 	local _rc=$?
+	[ "$_src" != "$_repo" ] && rm -rf "$_src"
 	if [ "$_rc" -ne 0 ]; then
 		echo "myflec deploy: rsync failed (exit $_rc)" >&2
 		return "$_rc"

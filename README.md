@@ -39,8 +39,9 @@ cat ~/myflec/profile >> ~/.bashrc
 exec bash
 ```
 
-The second line runs `myflec deploy` before MyFlec is installed: it shows a
-dry run, asks for confirmation, backs up every overwritten file under
+The second line runs `myflec deploy` before MyFlec is installed. It deploys
+the committed state of the clone (untracked files never reach `$HOME`),
+shows a dry run, asks for confirmation, backs up every overwritten file under
 `~/.local/state/myflec-backup/<date>/`, then checks that SSH keys and the git
 identity are in place.
 
