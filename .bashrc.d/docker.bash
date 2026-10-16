@@ -11,8 +11,8 @@ if _myflec_has docker; then
 	# Dive is a docker layer analysing tool.
 	alias dive="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
 
-	# Lazydocker
-	alias lazydocker="docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /yourpath:/.config/jesseduffield/lazydocker lazyteam/lazydocker"
+	# Lazydocker: config persisted in ${XDG_CONFIG_HOME:-~/.config}/lazydocker
+	alias lazydocker='mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/lazydocker" && docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v "${XDG_CONFIG_HOME:-$HOME/.config}/lazydocker":/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 
 	# Ctop - top-like container monitor
 	alias ctop="docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop:0.7.7"
