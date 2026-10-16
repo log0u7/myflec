@@ -345,6 +345,33 @@ _myflec_shipped() {
 	git -C "$_repo" log --format= --raw --no-abbrev -- "$1" | grep -q " $2 "
 }
 
+# Print one section of the update plan: a title with a count, then the
+# names in columns (core modules first). Nothing when the list is empty.
+_myflec_update_list() {
+	local _title="$1" _w=0 _cols _i=0 _n
+	shift
+	[ $# -eq 0 ] && return 0
+	local -a _names
+	mapfile -t _names < <(printf '%s\n' "$@" | LC_ALL=C sort)
+	for _n in "${_names[@]}"; do
+		[ ${#_n} -gt "$_w" ] && _w=${#_n}
+	done
+	_w=$((_w + 2))
+	_cols=$(((${COLUMNS:-80} - 4) / _w))
+	[ "$_cols" -lt 1 ] && _cols=1
+	printf '  %s (%d)\n' "$_title" "$#"
+	for _n in "${_names[@]}"; do
+		[ $((_i % _cols)) -eq 0 ] && printf '    '
+		_i=$((_i + 1))
+		if [ $((_i % _cols)) -eq 0 ] || [ "$_i" -eq "$#" ]; then
+			printf '%s\n' "$_n"
+		else
+			printf "%-${_w}s" "$_n"
+		fi
+	done
+	echo ""
+}
+
 # Record the repo HEAD as the installed version
 _myflec_update_record() {
 	mkdir -p "${1%/*}" && git -C "$_repo" rev-parse HEAD >"$1"
@@ -433,25 +460,27 @@ _myflec_update() {
 	local _total=$((${#_add[@]} + ${#_upd[@]} + ${#_keep[@]} + ${#_del[@]}))
 	if [ "$_total" -eq 0 ]; then
 		echo "myflec update: ~/.bashrc.d is up to date ($(git -C "$_repo" log --format=%h -1))."
-		[ ${#_local[@]} -gt 0 ] && echo "Local changes kept: ${_local[*]}"
-		[ ${#_drop[@]} -gt 0 ] && echo "Modified, removed upstream (kept): ${_drop[*]}"
+		_myflec_update_list "Kept, your changes (unchanged upstream)" "${_local[@]}"
+		_myflec_update_list "Kept, your changes (removed upstream)" "${_drop[@]}"
 		rm -rf "$_new"
 		_myflec_update_record "$_state"
 		return 0
 	fi
 
 	echo ""
-	echo "Update ~/.bashrc.d to $(git -C "$_repo" log --format='%h %s' -1):"
-	[ ${#_add[@]} -gt 0 ] && echo "  new       : ${_add[*]}"
-	[ ${#_upd[@]} -gt 0 ] && echo "  update    : ${_upd[*]}"
-	[ ${#_del[@]} -gt 0 ] && echo "  remove    : ${_del[*]}"
-	[ ${#_keep[@]} -gt 0 ] && echo "  modified  : ${_keep[*]} (kept, new version saved as <file>.myflec-new)"
-	[ ${#_drop[@]} -gt 0 ] && echo "  modified, removed upstream (kept): ${_drop[*]}"
-	[ ${#_local[@]} -gt 0 ] && echo "  local changes kept (unchanged upstream): ${_local[*]}"
+	echo "Update ~/.bashrc.d: ${_base:+${_base:0:7} -> }$(git -C "$_repo" log --format='%h (%cs) %s' -1)"
+	echo ""
+	_myflec_update_list "New" "${_add[@]}"
+	_myflec_update_list "Updated" "${_upd[@]}"
+	_myflec_update_list "Removed" "${_del[@]}"
+	_myflec_update_list "Kept, your changes (new version saved as <file>.myflec-new)" "${_keep[@]}"
+	_myflec_update_list "Kept, your changes (unchanged upstream)" "${_local[@]}"
+	_myflec_update_list "Kept, your changes (removed upstream)" "${_drop[@]}"
 
 	local _backup_dir
 	_backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/$(date +%F-%H%M%S)/.bashrc.d"
-	if ! _myflec_confirm "$_assume_yes" "Apply (replaced and removed files backed up in $_backup_dir)?"; then
+	echo "Backup of replaced and removed files: $_backup_dir"
+	if ! _myflec_confirm "$_assume_yes" "Apply?"; then
 		echo "myflec update: aborted."
 		rm -rf "$_new"
 		return 1
