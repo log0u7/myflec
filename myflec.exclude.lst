@@ -10,6 +10,7 @@ SECURITY.md
 mise.toml.example
 fnox.toml.example
 profile
+install.sh
 .git
 assets
 .gitignore

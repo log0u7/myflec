@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `install.sh`: one-line install (`curl -fsSL .../install.sh | bash`) or
+  from a clone (`bash install.sh -C <clone>`): runs `myflec deploy` and
+  hooks the loader into `~/.bashrc` once
 - `myflec deploy` and `myflec update` fetch MyFlec online by default (a
   blobless cache in `~/.cache/myflec/repo`, GitHub then GitLab and NotABug
   mirrors, or `MYFLEC_URL`); `-C <clone>` or `MYFLEC_REPO` keep using a

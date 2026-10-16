@@ -33,17 +33,29 @@ Everything is driven by one command: `myflec`.
 ## Install
 
 ```bash
-git clone https://github.com/log0u7/myflec ~/myflec
-bash -c '. ~/myflec/.bashrc.d/_myflec.bash && fMyflec deploy -C ~/myflec'
-cat ~/myflec/profile >> ~/.bashrc
+curl -fsSL https://raw.githubusercontent.com/log0u7/myflec/main/install.sh | bash
 exec bash
 ```
 
-The second line runs `myflec deploy` before MyFlec is installed. It deploys
-the committed state of the clone (untracked files never reach `$HOME`),
+Prefer reading a script before running it:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/log0u7/myflec/main/install.sh
+less install.sh
+bash install.sh
+```
+
+The installer needs `git`, `rsync` and `tar`. It runs `myflec deploy`, which
 shows a dry run, asks for confirmation, backs up every overwritten file under
-`~/.local/state/myflec-backup/<date>/`, then checks that SSH keys and the git
-identity are in place.
+`~/.local/state/myflec-backup/<date>/` and checks the SSH and git identity
+setup, then it hooks the loader into `~/.bashrc` once.
+
+From a clone instead (to hack on MyFlec):
+
+```bash
+git clone https://github.com/log0u7/myflec ~/myflec
+bash ~/myflec/install.sh -C ~/myflec
+```
 
 Identity templates (`.ssh/`, `.gitconfig`, `.gitconfig.d`) are never
 deployed: they are generic placeholders, see
