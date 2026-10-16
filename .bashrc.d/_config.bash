@@ -23,7 +23,10 @@ export PROMPT_COMMAND="history -a"                # Append commands to history f
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # Pager
-[[ $(command -v most) ]] && { most=$(command -v most); export PAGER="$most"; }
+if _myflec_has most; then
+    PAGER="$(command -v most)"
+    export PAGER
+fi
 
 # Terminal type: only set if the environment has not already provided one.
 # Let the real terminal emulator or multiplexer (tmux, byobu) set TERM.

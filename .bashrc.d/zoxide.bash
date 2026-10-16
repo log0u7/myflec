@@ -8,6 +8,6 @@
 # - zoxide 'z': jump to best match by frecency (adds on top)
 # - zoxide 'zi': interactive fuzzy selection
 
-if command -v zoxide >/dev/null 2>&1; then
+if _myflec_has zoxide; then
     eval "$(zoxide init bash)"
 fi

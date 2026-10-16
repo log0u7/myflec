@@ -2,7 +2,7 @@
 # mise - polyglot version manager, task runner, env loader
 # https://mise.jdx.dev/
 
-if command -v mise >/dev/null 2>&1; then
+if _myflec_has mise; then
     eval "$(mise activate bash)"
 
     # Short aliases

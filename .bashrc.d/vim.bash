@@ -1,12 +1,9 @@
 # ~/.bashrc.d/vim.bash
 
-# Set default editor
-if [ -x "$(command -v vim)" ]; then
+# Default editor and vi alias
+if _myflec_has vim; then
     EDITOR="$(command -v vim)"
     export EDITOR VISUAL="$EDITOR"
-fi
-
-if command -v vim >/dev/null 2>&1; then
     alias vi="vim"
 fi
 

@@ -41,7 +41,7 @@ gocd() {
 }
 
 # Go environment setup (fallback when mise is not available)
-if ! command -v mise >/dev/null 2>&1; then
+if ! _myflec_has mise; then
     export GOROOT=/usr/local/go
     setup_tool_path "GOROOT" "/usr/local/go" "/bin"
     export GOPATH="${GOPATH:-$HOME/go}"

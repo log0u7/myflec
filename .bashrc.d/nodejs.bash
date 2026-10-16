@@ -64,7 +64,7 @@ node-clean() {
 }
 
 # NVM (Node Version Manager) - fallback when mise is not available
-if ! command -v mise >/dev/null 2>&1; then
+if ! _myflec_has mise; then
 	export NVM_DIR="$HOME/.nvm"
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
@@ -91,6 +91,6 @@ if ! command -v mise >/dev/null 2>&1; then
 fi
 
 # Bash completions for NPM (only if mise not managing it)
-if command -v npm >/dev/null 2>&1; then
+if _myflec_has npm; then
 	eval "$(npm completion bash 2>/dev/null)"
 fi

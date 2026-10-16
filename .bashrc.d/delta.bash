@@ -5,6 +5,6 @@
 # Safe: GIT_PAGER is only set when delta is installed on the system.
 # .gitconfig is never touched by this module.
 
-if command -v delta >/dev/null 2>&1; then
+if _myflec_has delta; then
     export GIT_PAGER=delta
 fi
