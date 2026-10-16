@@ -6,8 +6,11 @@ dotfiles collection, but suggestions, fixes, and improvements are welcome.
 ## Ground Rules
 
 - Keep modules self-contained: one tool or concern per `.bashrc.d/*.bash` file.
-- Guard every optional tool with an availability check (for example
-  `command -v lsd`), so a missing tool never breaks shell startup.
+- Guard every optional tool with `_myflec_has <tool>` (defined by the
+  loader), so a missing tool never breaks shell startup.
+- Reuse the shared helpers rather than copying their logic:
+  `setup_tool_path` for PATH edits, `_myflec_docker_fallback` for
+  zero-install tools, `_dot_git` for the backup repo.
 - Never commit secrets, private keys, real hostnames, or personal identities.
   The repository ships anonymized examples only.
 - Do not use the em dash character (`-`). Prefer a colon, comma,

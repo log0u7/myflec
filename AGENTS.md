@@ -30,14 +30,20 @@ Section order: **Purpose** (what it does) -> **Usage** (how to use it) ->
 ## Conventions
 
 - All code, comments, and documentation in English.
-- Every optional tool must be guarded (`command -v <tool>`) so the shell
-  degrades gracefully when the tool is absent.
-- Apply DRY: reuse `setup_tool_path` from `_functions.bash` for PATH edits.
+- Every optional tool must be guarded with `_myflec_has <tool>` (defined by
+  the loader) so the shell degrades gracefully when the tool is absent.
+  Exception: `.bash_aliases`, sourced before the loader, uses `command -v`.
+- Apply DRY, reuse the shared helpers instead of copying their logic:
+  - `setup_tool_path` (`_functions.bash`) for every PATH edit;
+  - `_myflec_docker_fallback <tool> <image>` (`_functions.bash`) for
+    zero-install tools;
+  - `_myflec_modules` (loader) for module order;
+  - `_dot_git` (`_dotfiles.bash`) for every call on the backup repo.
   Apply KISS and YAGNI: one module = one responsibility.
 - No emoji in source files. Never commit secrets, private keys, or real host
   configs; use clearly generic placeholders.
-- Docker-run modules (zero-install tools): alias with `docker run --rm`,
-  guard with `command -v docker`, mount `$PWD:/work -w /work` for file access.
+- Docker-run modules (zero-install tools): `_myflec_docker_fallback`
+  (native binary first, else `docker run --rm` with `$PWD` on `/work`).
   Pin major version tags when available (e.g. `:4`, `:v2`, `:1`).
 
 ## Do not break
@@ -137,10 +143,10 @@ agents and humans:
 
 ## Modern tooling policy
 
-- **Docker-run (zero-install)**: usable at first command via Docker. Guard:
-  `command -v docker`. Mount `$PWD` for file access. Limited to CWD.
+- **Docker-run (zero-install)**: usable at first command via Docker, through
+  `_myflec_docker_fallback`. Mount `$PWD` for file access. Limited to CWD.
   Ex: glow, yq, jq, mdq, ctop, lazydocker, dive, sherlock.
-- **Native (recommended)**: installed via mise. Guard: `command -v <tool>`.
+- **Native (recommended)**: installed via mise. Guard: `_myflec_has <tool>`.
   Ex: bat, ripgrep, fd, fzf, zoxide, lazygit, gh, glab, delta, atuin, direnv.
 - **Native (obligatory)**: impossible in Docker (hooks, shims).
   Ex: fzf (`eval "$(fzf --bash)"`), zoxide, direnv, atuin.
