@@ -1,25 +1,30 @@
 # ~/.bashrc.d/_myflec.bash
-# myflec - self-management: module status, hot reload, deploy, backup.
+# myflec - single entry point: modules, deploy, backup and restore.
 #
 # Purpose: verify that all MyFlec modules are present, reload them without
-# opening a new shell, deploy the repo to $HOME safely, and expose the
-# dotfiles git backup through one command.
+# opening a new shell, deploy the repo to $HOME safely, and version the live
+# configuration in a git bare repo (~/.dotfiles), all through one command.
 #
 # Usage:
 #   myflec                          -> show help
 #   myflec status                   -> list all modules (core then tool) with a count
-#   myflec reload                   -> re-source every module (safe, hooks preserved)
-#   myflec reload --full            -> re-source the full loader (hooks may accumulate)
+#   myflec reload [--full]          -> re-source modules (--full: the whole loader)
 #   myflec deploy [-C repo] [--yes] -> safe rsync deploy (dry run, confirm, backup, checks)
-#   myflec backup [--init url ...]  -> dotfiles git backup (commit + push all remotes)
-#   myflec restore <url>            -> restore live state from a dotfiles bare repo
+#   myflec init <url> [<url>...]    -> create the backup repo (first URL = origin)
+#   myflec backup [message]         -> add -u, commit, push to every remote
+#   myflec restore <url>            -> restore live state from a backup repo
+#   myflec sync                     -> pull --rebase the backup repo
+#   myflec changes                  -> short status of tracked files
+#   myflec files                    -> list tracked files
+#   myflec remote [add|rm <url>]    -> list, add or remove push targets
 #   myflec help                     -> show help
 #
 # Internals:
 #   Core module (_*.bash), loads after _functions.bash, before _shopts.bash.
 #   The alias myflec=fMyflec lives in _aliases.bash and resolves at call time.
-#   deploy/backup/restore delegate to the repo myflec.exclude.lst rules and to
-#   the _dotfiles.bash toolbox (bare repo at ~/.dotfiles, multi-remote push).
+#   deploy uses the repo myflec.exclude.lst rules. The backup commands delegate
+#   to the _dotfiles.bash toolbox, whose dotfiles-* functions stay available
+#   for compatibility. 'myflec backup --init' is kept as an alias of 'init'.
 
 fMyflec() {
 	local _cmd="${1:-help}"
@@ -40,6 +45,10 @@ fMyflec() {
 		shift
 		_myflec_deploy "$@"
 		;;
+	init)
+		shift
+		_myflec_init "$@"
+		;;
 	backup)
 		shift
 		_myflec_backup "$@"
@@ -47,6 +56,19 @@ fMyflec() {
 	restore)
 		shift
 		_myflec_restore "$@"
+		;;
+	sync)
+		dotfiles-sync
+		;;
+	changes)
+		dotfiles-status
+		;;
+	files)
+		dotfiles-list
+		;;
+	remote)
+		shift
+		_myflec_remote "$@"
 		;;
 	help | --help | -h | "")
 		_myflec_help
@@ -60,28 +82,37 @@ fMyflec() {
 }
 
 _myflec_help() {
-	echo "Usage: myflec <command>"
-	echo ""
-	echo "Commands:"
-	echo "  status            List all loaded modules"
-	echo "  reload            Re-source modules only (safe, hooks preserved)"
-	echo "  reload --full     Re-source full loader (picks up loader/_myflec.bash changes)"
-	echo "  deploy [-C repo] [--yes]"
-	echo "                    Safe rsync deploy: dry run, confirm, backup, ssh/git checks"
-	echo "  backup [--init <url> [<url>...]] | [message]"
-	echo "                    Git backup via the dotfiles bare repo (~/.dotfiles):"
-	echo "                    commit + push to every configured remote"
-	echo "  restore <url>     Restore live state from a dotfiles bare repo"
-	echo "  help              Show this help"
-	echo ""
-	echo "Notes:"
-	echo "  - 'myflec deploy' never transfers the identity templates (.ssh/,"
-	echo "    .gitconfig, .gitconfig.d): they stay in myflec.exclude.lst."
-	echo "  - Extra backup push targets: dotfiles-addbackup <url>."
-	echo "  - After a restore, embedded repos come back with:"
-	echo "    dot submodule update --init"
-	echo "  - After updating myflec files, use 'myflec reload --full' to pick up"
-	echo "    changes to loader or _myflec.bash itself."
+	cat <<'EOF'
+Usage: myflec <command>
+
+Modules:
+  status                  List all loaded modules
+  reload [--full]         Re-source modules (--full: the whole loader)
+
+Deploy (repo -> $HOME):
+  deploy [-C repo] [--yes]
+                          Safe rsync deploy: dry run, confirm, backup, checks
+
+Backup ($HOME <-> git, bare repo at ~/.dotfiles):
+  init <url> [<url>...]   Create the backup repo (extra URLs = push targets)
+  backup [message]        Commit tracked changes and push to every remote
+  restore <url>           Clone a backup repo and check it out into $HOME
+  sync                    Pull (rebase) the latest backup
+  changes                 Short status of tracked files
+  files                   List tracked files
+  remote                  List remotes and push targets
+  remote add <url>        Add a push target
+  remote rm <url>         Remove a push target
+
+  help                    Show this help
+
+Notes:
+  - Track a new file with 'dot add <file>' ('dot' is git on the backup repo).
+  - deploy never transfers the identity templates (.ssh/, .gitconfig,
+    .gitconfig.d): they stay in myflec.exclude.lst.
+  - After a restore, embedded repos come back with: dot submodule update --init
+  - Use 'myflec reload --full' after changing the loader or _myflec.bash.
+EOF
 }
 
 _myflec_status() {
@@ -260,14 +291,19 @@ _myflec_deploy_checks() {
 
 # ---- backup / restore (delegates to _dotfiles.bash) ----------------------
 
+_myflec_init() {
+	if [ $# -eq 0 ]; then
+		echo "Usage: myflec init <url> [<url>...]" >&2
+		return 1
+	fi
+	dotfiles-init "$@"
+}
+
 _myflec_backup() {
+	# 'backup --init' kept for compatibility with earlier releases
 	if [ "${1:-}" = "--init" ]; then
 		shift
-		if [ $# -eq 0 ]; then
-			echo "Usage: myflec backup --init <url> [<url>...]" >&2
-			return 1
-		fi
-		dotfiles-init "$@"
+		_myflec_init "$@"
 	else
 		dotfiles-backup "$@"
 	fi
@@ -275,8 +311,31 @@ _myflec_backup() {
 
 _myflec_restore() {
 	if [ $# -lt 1 ]; then
-		echo "Usage: myflec restore <clone-url>" >&2
+		echo "Usage: myflec restore <url>" >&2
 		return 1
 	fi
 	dotfiles-restore "$1"
+}
+
+_myflec_remote() {
+	case "${1:-list}" in
+	list)
+		dotfiles-remotes
+		;;
+	add | rm)
+		if [ -z "${2:-}" ]; then
+			echo "Usage: myflec remote $1 <url>" >&2
+			return 1
+		fi
+		if [ "$1" = "add" ]; then
+			dotfiles-addbackup "$2"
+		else
+			dotfiles-removebackup "$2"
+		fi
+		;;
+	*)
+		echo "myflec remote: unknown action '$1' (list, add, rm)" >&2
+		return 1
+		;;
+	esac
 }

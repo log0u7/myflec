@@ -9,8 +9,10 @@ This file is the durable, agent-facing context.
 - `.bashrc.d/` : bash modules, loaded by `.bashrc.d/loader` (the loader).
   - Core modules are prefixed with `_` and load first, alphabetically.
   - Tool modules load next, alphabetically.
-  - `_myflec.bash` provides the `myflec` command: `myflec status` (module
-    list) and `myflec reload` (hot reload; `--full` re-sources the loader).
+  - `_myflec.bash` provides the `myflec` command, the single user-facing
+    entry point: `status`, `reload [--full]`, `deploy`, and the backup
+    commands `init`, `backup`, `restore`, `sync`, `changes`, `files`,
+    `remote [add|rm]`.
   - The loader is invoked from `~/.bashrc` via the `profile` snippet.
 - `.bash_aliases` : native Debian/Ubuntu mechanism, sourced by the default
   `.bashrc`. Kept on purpose, separate from `.bashrc.d/`. Do not consolidate.
@@ -99,11 +101,15 @@ Forges: `github.com`, `gitlab.com`, `notabug.org`.
 ## Dotfiles deployment
 
 Bare git repo at `$HOME/.dotfiles` with `--work-tree=$HOME`.
-Module `_dotfiles.bash` provides:
+User-facing interface: `myflec init|backup|restore|sync|changes|files|remote`
+(`_myflec.bash`), the only commands documented in README.
+Module `_dotfiles.bash` is the implementation and provides:
 - Alias `dot` (conditional on repo existence)
-- Functions: `dotfiles-init`, `dotfiles-restore`, `dotfiles-list`,
-  `dotfiles-status`, `dotfiles-backup`, `dotfiles-sync`,
-  `dotfiles-addbackup`, `dotfiles-removebackup`, `dotfiles-remotes`
+- Functions kept for compatibility (do not remove): `dotfiles-init`,
+  `dotfiles-restore`, `dotfiles-list`, `dotfiles-status`, `dotfiles-backup`,
+  `dotfiles-sync`, `dotfiles-addbackup`, `dotfiles-removebackup`,
+  `dotfiles-remotes`. User-facing messages point to the `myflec` names.
+- `myflec backup --init` is kept as a compatibility alias of `myflec init`.
 - Dotfiles repo PRIVATE and DISTINCT from MyFlec (public).
 - Multi-forge push via `git remote set-url --add --push origin <url>`.
 - `.gitignore` whitelist mode (ignore all, allow specific paths).
@@ -117,7 +123,7 @@ agents and humans:
   with full unfiltered output, confirmation, `--backup --backup-dir` under
   `${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/`, then functional
   checks (`ssh -G` forges resolve an existing IdentityFile, git identity set).
-- Git backups go through `myflec backup [--init <url>...] | [msg]` and
+- Git backups go through `myflec init <url>...`, `myflec backup [msg]` and
   `myflec restore <url>` (thin facades over the `_dotfiles.bash` toolbox):
   bare repo at `~/.dotfiles`, work-tree `$HOME`, push to every configured
   remote, agnostic to submodules and to single/multiple remotes.

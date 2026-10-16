@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `myflec` is now the single entry point for backups: new subcommands
+  `myflec init`, `myflec sync`, `myflec changes`, `myflec files` and
+  `myflec remote [add|rm <url>]`, on top of `myflec backup` and
+  `myflec restore`. The `dotfiles-*` functions and `myflec backup --init`
+  remain available for compatibility; their hints now point to the
+  `myflec` names
 - SSH over 443 as the main route for public forges: `.ssh/config.d/forges`
   routes `github.com` -> `ssh.github.com:443` and `gitlab.com` ->
   `altssh.gitlab.com:443` (official endpoints, host fingerprints verified
