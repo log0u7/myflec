@@ -51,7 +51,7 @@ fMyflec() {
 		;;
 	init)
 		shift
-		_myflec_init "$@"
+		dotfiles-init "$@"
 		;;
 	add)
 		shift
@@ -300,29 +300,24 @@ _myflec_deploy_checks() {
 }
 
 # ---- backup / restore (delegates to _dotfiles.bash) ----------------------
+# Argument checks of init, restore and remote add/rm live in the dotfiles-*
+# functions; only the commands implemented here check their own.
 
-_myflec_init() {
-	if [ $# -eq 0 ]; then
-		echo "Usage: myflec init <url> [<url>...]" >&2
-		return 1
-	fi
-	dotfiles-init "$@"
+# Usage guard: _myflec_need <argc> <min> <usage>
+_myflec_need() {
+	[ "$1" -ge "$2" ] && return 0
+	echo "Usage: myflec $3" >&2
+	return 1
 }
 
 _myflec_add() {
-	if [ $# -eq 0 ]; then
-		echo "Usage: myflec add <path>..." >&2
-		return 1
-	fi
+	_myflec_need $# 1 "add <path>..." || return 1
 	_dot_require_repo || return 1
 	_dot_git add -- "$@"
 }
 
 _myflec_rm() {
-	if [ $# -eq 0 ]; then
-		echo "Usage: myflec rm <path>..." >&2
-		return 1
-	fi
+	_myflec_need $# 1 "rm <path>..." || return 1
 	_dot_require_repo || return 1
 	# --cached: stop tracking only, never delete the live file
 	_dot_git rm -r --cached --quiet -- "$@" &&
@@ -333,10 +328,7 @@ _myflec_submodule() {
 	_dot_require_repo || return 1
 	case "${1:-}" in
 	add)
-		if [ -z "${2:-}" ] || [ -z "${3:-}" ]; then
-			echo "Usage: myflec submodule add <url> <path>" >&2
-			return 1
-		fi
+		_myflec_need $# 3 "submodule add <url> <path>" || return 1
 		# submodule commands must run from the top of the work tree
 		(cd "$HOME" && _dot_git submodule add -- "$2" "$3")
 		;;
@@ -344,8 +336,7 @@ _myflec_submodule() {
 		(cd "$HOME" && _dot_git submodule update --init --recursive)
 		;;
 	*)
-		echo "Usage: myflec submodule add <url> <path> | update" >&2
-		return 1
+		_myflec_need 0 1 "submodule add <url> <path> | update"
 		;;
 	esac
 }
@@ -354,18 +345,14 @@ _myflec_backup() {
 	# 'backup --init' kept for compatibility with earlier releases
 	if [ "${1:-}" = "--init" ]; then
 		shift
-		_myflec_init "$@"
+		dotfiles-init "$@"
 	else
 		dotfiles-backup "$@"
 	fi
 }
 
 _myflec_restore() {
-	if [ $# -lt 1 ]; then
-		echo "Usage: myflec restore <url>" >&2
-		return 1
-	fi
-	dotfiles-restore "$1" || return 1
+	dotfiles-restore "$@" || return 1
 	# Bring back embedded repos (e.g. myflec itself as a submodule)
 	if _dot_git ls-files --error-unmatch .gitmodules >/dev/null 2>&1; then
 		_myflec_submodule update
@@ -374,20 +361,9 @@ _myflec_restore() {
 
 _myflec_remote() {
 	case "${1:-list}" in
-	list)
-		dotfiles-remotes
-		;;
-	add | rm)
-		if [ -z "${2:-}" ]; then
-			echo "Usage: myflec remote $1 <url>" >&2
-			return 1
-		fi
-		if [ "$1" = "add" ]; then
-			dotfiles-addbackup "$2"
-		else
-			dotfiles-removebackup "$2"
-		fi
-		;;
+	list) dotfiles-remotes ;;
+	add) dotfiles-addbackup "${2:-}" ;;
+	rm) dotfiles-removebackup "${2:-}" ;;
 	*)
 		echo "myflec remote: unknown action '$1' (list, add, rm)" >&2
 		return 1
