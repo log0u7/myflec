@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `myflec deploy` and `myflec update` fetch MyFlec online by default (a
+  blobless cache in `~/.cache/myflec/repo`, GitHub then GitLab and NotABug
+  mirrors, or `MYFLEC_URL`); `-C <clone>` or `MYFLEC_REPO` keep using a
+  local clone. `update` lists the commits since your version
 - `myflec update [-C repo] [--yes]`: pulls the repo and updates
   `~/.bashrc.d` only. Modules you never changed are updated or removed,
   modules you changed are kept (new version saved as `<file>.myflec-new`),
@@ -40,6 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `myflec deploy` without `-C` no longer deploys the current directory: it
+  installs the online version. It now records the installed commit (base
+  of `myflec update`), and its identity checks only warn
 - Removed the empty `fd.bash` module (fd needs no setup, its fzf
   integration lives in `fzf.bash`)
 - DRY/KISS refactor, no behavior change: shared helpers `_myflec_has`

@@ -134,8 +134,13 @@ agents and humans:
   with full unfiltered output, confirmation, `--backup --backup-dir` under
   `${XDG_STATE_HOME:-$HOME/.local/state}/myflec-backup/`, then functional
   checks (`ssh -G` forges resolve an existing IdentityFile, git identity set).
-- Updates go through `myflec update`: `git pull --ff-only`, then only
-  `~/.bashrc.d` from `git archive HEAD`. A live file is replaced or removed
+- `deploy` and `update` read a git repo: by default the online cache
+  `${XDG_CACHE_HOME:-~/.cache}/myflec/repo` (bare, `--filter=blob:none`,
+  refreshed from `MYFLEC_URL` or the mirrors in turn), or a local clone with
+  `-C`/`MYFLEC_REPO` (update pulls it with `--ff-only`). Both deploy the
+  committed state only (`git archive HEAD`) and record it as the base of the
+  next update.
+- Updates go through `myflec update`: only `~/.bashrc.d`. A live file is replaced or removed
   only when its blob is a version the repo shipped at that path (path
   history); otherwise it is kept and the new version written as
   `<file>.myflec-new`. Last installed commit: `$XDG_STATE_HOME/myflec/deployed`.
