@@ -28,7 +28,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `OPENCODE_WORKTREE_GUARD_MAIN_BRANCHES` for worktree-guard), guarded by
   `command -v opencode`
 
+### Changed
+
+- README rewritten around the `myflec` command: one install path, one
+  command table, a backup and restore guide, a compatibility table for the
+  former `dotfiles-*` functions. Removed the stale `powerline.bash` entry
+  and the duplicated Installation section
+
 ### Fixed
+
+- README install procedure: `myflec deploy` was documented after sourcing
+  `~/.bashrc` on a machine where `~/.bashrc.d/` does not exist yet; the
+  bootstrap now sources `_myflec.bash` from the clone
 
 - Git identity templates: `hasconfig:remote.*.url` includes for
   github/gitlab (declared last so the matching forge identity wins on
