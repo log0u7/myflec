@@ -143,6 +143,8 @@ Notes:
   - deploy never transfers the identity templates (.ssh/, .gitconfig,
     .gitconfig.d): they stay in myflec.exclude.lst.
   - Use 'myflec reload --full' after changing the loader or _myflec.bash.
+  - New shells tell you when an update is available (checked in the
+    background once a day); MYFLEC_NO_UPDATE_CHECK=1 turns it off.
 EOF
 }
 
@@ -264,6 +266,8 @@ _myflec_fetch() {
 		else
 			mkdir -p "${_cache%/*}" &&
 				git clone -q --bare --filter=blob:none "$_url" "$_cache" &&
+				git -C "$_cache" fetch -q origin "+refs/heads/main:refs/heads/main" &&
+				git -C "$_cache" symbolic-ref HEAD refs/heads/main &&
 				_repo="$_cache" && return 0
 			rm -rf "$_cache"
 		fi
@@ -636,3 +640,51 @@ _myflec_remote() {
 		;;
 	esac
 }
+
+# ---- update notice ----------------------------------------------------------
+# Tell the user, once per interactive shell, that an update is available.
+# Never blocks: the shell start only reads a local state file; the network
+# check runs detached in the background at most once a day, and its result
+# is shown by the next shell (same model as npm update-notifier or glab).
+# Skipped outside interactive shells, in CI, with MYFLEC_NO_UPDATE_CHECK set,
+# with a local clone (MYFLEC_REPO) and before the first deploy/update.
+# Never updates by itself: 'myflec update' shows the plan and asks.
+
+# Background check: count the commits touching .bashrc.d since the installed
+# version and store "<installed> <latest> <count>" in the check file.
+_myflec_update_check() {
+	local _base="$1" _out="$2" _repo="" _n=0
+	mkdir -p "${_out%/*}" || return 1
+	# Give up on a stalled mirror instead of hanging in the background
+	export GIT_TERMINAL_PROMPT=0 GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=15
+	if _myflec_fetch; then
+		git -C "$_repo" cat-file -e "$_base^{commit}" 2>/dev/null &&
+			_n="$(git -C "$_repo" rev-list --count --no-merges "$_base..HEAD" -- .bashrc.d)"
+		printf '%s %s %s\n' "$_base" "$(git -C "$_repo" rev-parse HEAD)" "${_n:-0}" >"$_out.tmp" &&
+			mv "$_out.tmp" "$_out"
+	elif [ -f "$_out" ]; then
+		touch "$_out" # offline: retry tomorrow, keep the last known result
+	else
+		printf '%s %s 0\n' "$_base" "$_base" >"$_out"
+	fi
+}
+
+_myflec_update_notice() {
+	[[ $- == *i* ]] || return 0
+	[ -z "${_MYFLEC_NOTICE_DONE:-}" ] || return 0 # once per shell, not on reload
+	_MYFLEC_NOTICE_DONE=1
+	[ -z "${MYFLEC_NO_UPDATE_CHECK:-}${CI:-}${MYFLEC_REPO:-}" ] || return 0
+	local _dir="${XDG_STATE_HOME:-$HOME/.local/state}/myflec" _base _b _h _n
+	[ -r "$_dir/deployed" ] || return 0
+	_base="$(<"$_dir/deployed")"
+	if [ -r "$_dir/update-check" ] && read -r _b _h _n <"$_dir/update-check" &&
+		[ "$_b" = "$_base" ] && [ "${_n:-0}" -gt 0 ]; then
+		echo "myflec: update available ($_n change(s) since ${_base:0:7}), run 'myflec update'" >&2
+	fi
+	if [ -z "$(find "$_dir/update-check" -mmin -1440 2>/dev/null)" ]; then
+		(_myflec_update_check "$_base" "$_dir/update-check" >/dev/null 2>&1 &)
+	fi
+	return 0
+}
+
+_myflec_update_notice

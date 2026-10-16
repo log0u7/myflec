@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Update notice: a new interactive shell prints one line when MyFlec has
+  module changes you have not installed. It never blocks: the shell only
+  reads a local file, a detached job checks online at most once a day.
+  Off with `MYFLEC_NO_UPDATE_CHECK=1` (and when `CI` or `MYFLEC_REPO` is
+  set)
 - `install.sh`: one-line install (`curl -fsSL .../install.sh | bash`) or
   from a clone (`bash install.sh -C <clone>`): runs `myflec deploy` and
   hooks the loader into `~/.bashrc` once
