@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-16
+
 ### Added
 
+- Update notice: a new interactive shell prints one line when MyFlec has
+  module changes you have not installed. It never blocks: the shell only
+  reads a local file, a detached job checks online at most once a day.
+  Off with `MYFLEC_NO_UPDATE_CHECK=1` (and when `CI` or `MYFLEC_REPO` is
+  set)
+- README: install (one line first), update, settings and uninstall
+  sections
 - `install.sh`: one-line install (`curl -fsSL .../install.sh | bash`) or
   from a clone (`bash install.sh -C <clone>`): runs `myflec deploy` and
   hooks the loader into `~/.bashrc` once
@@ -368,6 +377,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git identities and searchhost function
 - Various typos
 
+[Unreleased]: https://github.com/log0u7/myflec/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/log0u7/myflec/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/log0u7/myflec/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/log0u7/myflec/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/log0u7/myflec/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/log0u7/myflec/compare/v0.3.0...v0.4.0
