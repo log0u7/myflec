@@ -217,8 +217,14 @@ mise use -g bat ripgrep fd fzf zoxide lazygit gh glab delta atuin direnv tlrc uv
 ```
 
 `glow`, `yq`, `jq`, `mdq`, `ctop`, `lazydocker`, `dive` and `sherlock` need
-no install: they run through Docker on first use. File-reading ones mount the
-current directory, so they only see files under `$PWD` (pipes work).
+no install: they run through Docker on first use (`glow`, `yq`, `jq` and
+`mdq` only when no native binary is installed).
+
+- File tools mount the current directory, so they only see files under
+  `$PWD` (pipes work).
+- Containers that write files run as you: what `yq -i` rewrites, the
+  results `sherlock` saves in the current directory and the lazydocker
+  config (`~/.config/lazydocker`) belong to you, not to root.
 
 Also expected: [starship](https://starship.rs/) (prompt, Nerd Font
 required), `lsd`, `most`, and optionally `docker`, `byobu`,

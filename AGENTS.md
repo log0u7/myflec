@@ -44,6 +44,10 @@ Section order: **Purpose** (what it does) -> **Usage** (how to use it) ->
   configs; use clearly generic placeholders.
 - Docker-run modules (zero-install tools): `_myflec_docker_fallback`
   (native binary first, else `docker run --rm` with `$PWD` on `/work`).
+  Any container that writes host files runs as the caller
+  (`--user "$(id -u):$(id -g)"`); one that also needs the docker socket
+  adds `--group-add "$(stat -c %g /var/run/docker.sock)"`. Persistent
+  tool state goes under `${XDG_CONFIG_HOME:-$HOME/.config}/<tool>`.
   Pin major version tags when available (e.g. `:4`, `:v2`, `:1`).
 
 ## Do not break
