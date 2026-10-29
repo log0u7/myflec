@@ -3,6 +3,7 @@
 [![Shell](https://img.shields.io/badge/Shell-Bash-4EAA25?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![Platform](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org/)
 [![Prompt](https://img.shields.io/badge/Prompt-Starship-DD0B78?logo=starship&logoColor=white)](https://starship.rs/)
+[![Env](https://img.shields.io/badge/Env-Direnv-333333?logo=direnv&logoColor=white)](https://direnv.net) [![Secrets](https://img.shields.io/badge/Secrets-fnox-000000)](https://fnox.jdx.dev)
 [![Maintained](https://img.shields.io/badge/Maintained-yes-brightgreen)](https://github.com/log0u7/myflec)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
