@@ -2,7 +2,9 @@
 
 Reference for the SSH and Git identity templates shipped with MyFlec
 (`.ssh/config`, `.ssh/config.d/`, `.gitconfig`, `.gitconfig.d/`). See also
-[GIT-IDENTITY.md](GIT-IDENTITY.md) for the identity resolution order.
+[GIT-IDENTITY.md](GIT-IDENTITY.md) for the identity resolution order and
+[SSH keys backup](README.md#ssh-keys-backup) for backing the private keys
+up with age.
 
 ## Identity model
 

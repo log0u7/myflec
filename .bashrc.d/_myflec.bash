@@ -93,6 +93,14 @@ fMyflec() {
 		shift
 		_myflec_remote "$@"
 		;;
+	keys-backup)
+		shift
+		_keysbackup_run "$@"
+		;;
+	keys-restore)
+		shift
+		_keysbackup_extract "$@"
+		;;
 	help | --help | -h | "")
 		_myflec_help
 		;;
@@ -135,6 +143,17 @@ Backup ($HOME <-> git, bare repo at ~/.dotfiles):
   remote                  List remotes and push targets
   remote add <url>        Add a push target
   remote rm <url>         Remove a push target
+
+SSH keys (age-encrypted archive of ~/.ssh):
+  keys-backup [message]   Seal ~/.ssh in a dated age archive, then commit
+                          and push it like 'myflec backup'. Needs
+                          KEYSBACKUP_RECIPIENT in the config file (see
+                          keys-backup.conf.example). The age private key
+                          must never be committed: keep a copy outside
+                          the machine it protects.
+  keys-restore <archive> [--force]
+                          Decrypt and extract a keys archive into $HOME
+                          (existing files kept without --force)
 
   help                    Show this help
 

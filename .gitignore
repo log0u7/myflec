@@ -12,6 +12,7 @@
 !assets/
 !assets/*
 !myflec.exclude.lst
+!keys-backup.conf.example
 !.bash_*
 !.bashrc.d
 !.bashrc.d/*

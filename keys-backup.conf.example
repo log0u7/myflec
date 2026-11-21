@@ -1,0 +1,22 @@
+# MyFlec SSH keys backup configuration
+# Copy to ~/.config/myflec/keys-backup.conf and fill in your own values.
+# Every setting can also be overridden by exporting the same variable.
+
+# age public key of the archive recipient. Generate a DEDICATED keypair
+# for the backup (age-keygen) and keep the private key file out of the
+# machine it protects (password manager or paper). Do not reuse a key
+# already shared with a project.
+KEYSBACKUP_RECIPIENT="age1replace-with-your-public-key0000000000000000000000000000"
+
+# Directory of the archive, relative or absolute inside $HOME. It must be
+# whitelisted in your dotfiles backup (~/.gitignore) to be committed:
+#   !.local/
+#   !.local/share/
+#   !.local/share/myflec/
+#   !.local/share/myflec/keys-backup/
+#   !.local/share/myflec/keys-backup/*.age
+#KEYSBACKUP_DEST="$HOME/.local/share/myflec/keys-backup"
+
+# Path of the age identity file used by 'myflec keys-restore'.
+# Default: ~/.config/age/ssh-keys-backup.key
+#KEYSBACKUP_IDENTITY="$HOME/.config/age/ssh-keys-backup.key"
