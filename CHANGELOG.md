@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `myflec keys-backup` and `myflec keys-restore`: seal `~/.ssh` in a dated
+  age archive (known_hosts, authorized_keys and control sockets excluded),
+  commit and push it through the backup repo, and decrypt it back into
+  `$HOME` on a new machine. Recipient and paths come from
+  `~/.config/myflec/keys-backup.conf` (template:
+  `keys-backup.conf.example`), overridable by environment. The age private
+  key never enters the archive or the repo.
+
 ### Changed
 
 - README badges: added Direnv and fnox (per-directory env and secrets loading).

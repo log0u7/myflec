@@ -24,6 +24,7 @@ Everything is driven by one command: `myflec`.
 - [Uninstall](#uninstall)
 - [The myflec command](#the-myflec-command)
 - [Backup and restore](#backup-and-restore)
+- [SSH keys backup](#ssh-keys-backup)
 - [Tools](#tools)
 - [Modules](#modules)
 - [SSH and Git identities](#ssh-and-git-identities)
@@ -158,6 +159,8 @@ left untouched.
 | `myflec changes` | Show changes in tracked files |
 | `myflec files` | List tracked files |
 | `myflec remote [add\|rm <url>]` | List, add or remove push targets |
+| `myflec keys-backup [message]` | Seal `~/.ssh` in an age archive, commit and push it |
+| `myflec keys-restore <archive> [--force]` | Decrypt a keys archive into `$HOME` |
 | `myflec help` | Show help |
 
 `myflec reload` keeps shell hooks intact. Use `--full` only after changing
@@ -253,6 +256,78 @@ work:
 | `dot submodule add <url> <path>` | `myflec submodule add <url> <path>` |
 | `dot submodule update --init` | `myflec submodule update` |
 
+## SSH keys backup
+
+The [backup](#backup-and-restore) tracks configuration files, never private
+keys: they must not sit in plain text in a git repo. But losing them means
+re-issuing every identity, so `myflec keys-backup` seals `~/.ssh` in an age
+archive, commits it to the backup repo and pushes it to every remote. The
+archive is useless without the age private key, which stays off the repo.
+
+### First time
+
+1. Generate a dedicated age keypair. Do not reuse a key already shared with
+   a project, and keep the private key file out of the machine it protects
+   (password manager or paper):
+
+   ```bash
+   age-keygen -o ~/.config/age/ssh-keys-backup.key
+   ```
+
+2. Configure the recipient from the template:
+
+   ```bash
+   mkdir -p ~/.config/myflec
+   cp <myflec-clone>/keys-backup.conf.example ~/.config/myflec/keys-backup.conf
+   $EDITOR ~/.config/myflec/keys-backup.conf
+   ```
+
+3. Whitelist the archive directory in your backup `~/.gitignore` (the
+   template shows the exact lines) and track the config itself:
+
+   ```bash
+   myflec add .config/myflec/keys-backup.conf
+   ```
+
+4. Create the first archive and push it:
+
+   ```bash
+   myflec keys-backup "initial keys archive"
+   ```
+
+The archive lands in `~/.local/share/myflec/keys-backup/` by default
+(`KEYSBACKUP_DEST` moves it). Verify it round-trips before trusting it:
+
+```bash
+age -d -i ~/.config/age/ssh-keys-backup.key \
+    ~/.local/share/myflec/keys-backup/ssh-keys-*.tar.gz.age | tar -tzf - | head
+```
+
+### Every day
+
+```bash
+myflec keys-backup              # new dated archive, commit, push
+```
+
+One archive per day of use: run it after adding or rotating a key.
+
+### New machine
+
+```bash
+myflec restore git@github.com:user/dotfiles.git
+myflec keys-restore ~/.local/share/myflec/keys-backup/ssh-keys-<date>.tar.gz.age
+```
+
+Existing files are never overwritten without `--force`. The identity file
+defaults to `~/.config/age/ssh-keys-backup.key` (`KEYSBACKUP_IDENTITY`
+moves it): restore it from your password manager first.
+
+### What stays out
+
+`known_hosts`, `known_hosts.old`, `authorized_keys` and the `cm-*` control
+sockets are excluded from the archive: the first two travel in the plaintext
+backup, the rest is runtime state.
+
 ## Tools
 
 ### Quick reference
@@ -327,6 +402,7 @@ order, then starts Starship.
 | `_config.bash` | Locale, history, pager, colors, TERM |
 | `_dotfiles.bash` | Backup toolbox behind `myflec init/backup/restore/...`, `dot` alias |
 | `_functions.bash` | Core helpers (`setup_tool_path`, `mkcd`, `extract`, `calc`, GPG, host search) |
+| `_keysbackup.bash` | Age-encrypted `~/.ssh` archive behind `myflec keys-backup/keys-restore` |
 | `_myflec.bash` | The `myflec` command |
 | `_shopts.bash` | Bash `shopt` options |
 | `mise.bash`, `fnox.bash` | Activation, hooks, aliases, completion |
